@@ -1,0 +1,8 @@
+<?php require("header.phtml") ?>
+  <body>
+    <h1>Administration for <?=$group?></h1>
+    <form action="/admin/<?=$group?>/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="qqchat">
+        <input type="submit" value="Upload">
+    </form>
+<?php require("footer.phtml") ?>
