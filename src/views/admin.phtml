@@ -1,8 +1,9 @@
 <?php require("header.phtml") ?>
-  <body>
-    <h1>Administration for <?=$group?></h1>
-    <form action="/admin/<?=$group?>/upload" method="POST" enctype="multipart/form-data">
-        <input type="file" name="qqchat">
-        <input type="submit" value="Upload">
-    </form>
+    <?php if(isset($group)) : ?>
+    <?php else: ?>
+        <h1>Administration</h1>
+        <?php foreach($groups as $key => $name) : ?>
+          <p><?= $name ?>: <a href="/admin/<?= $key ?>/upload">Upload</a> <a href="/admin/<?= $key ?>/view">View</a></p>
+        <?php endforeach ?>
+    <?php endif; ?>
 <?php require("footer.phtml") ?>

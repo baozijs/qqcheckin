@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:53:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-16 17:23:27
+ * @Last Modified time: 2016-10-26 09:05:25
  */
 namespace ScalersTalk\Checkin;
 
@@ -18,5 +18,6 @@ use \LeanCloud\Object;
 
 class User extends CheckinBase {
 
+    // function 
 
 }

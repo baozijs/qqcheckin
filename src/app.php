@@ -21,6 +21,9 @@ use \LeanCloud\Object;
 use \ScalersTalk\Checkin\Auth;
 use \ScalersTalk\Checkin\Admin;
 use \ScalersTalk\Checkin\User;
+use \ScalersTalk\Setting\Config;
+
+define('DEBUG', true);
 
 $app = new \Slim\App();
 // 禁用 Slim 默认的 handler，使得错误栈被日志捕捉
@@ -47,10 +50,7 @@ $auth = new Auth($app);
 $user = new User($app);
 
 $app->get('/', function (Request $req, Response $resp) {
-    return $this->view->render($resp, "index.phtml", ['list' => array(
-        "kuang" => '狂练',
-        "ling" => '零听',
-    )]);
+    return $this->view->render($resp, "index.phtml", ['groups' => Config::get('groups')]);
 });
 
 $app->get('/admin[/{group}]', function(Request $req, Response $resp, $args) {
@@ -65,6 +65,14 @@ $app->post('/admin/{group}/upload', function(Request $req, Response $resp, $args
     // var_dump($files);
     // $auth->needAdmin($req, $resp, $args);
     $admin->upload($req, $resp, $args);
+});
+
+
+$app->get('/admin/{group}/upload', function(Request $req, Response $resp, $args) {
+    $admin = new Admin($this);
+    // var_dump($files);
+    // $auth->needAdmin($req, $resp, $args);
+    $admin->showUpload($req, $resp, $args);
 });
 
 // 显示 todo 列表
