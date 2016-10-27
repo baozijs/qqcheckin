@@ -1,3 +1,4 @@
 .avoscloud/
 vendor/
 cache
+.DS_Store

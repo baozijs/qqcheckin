@@ -3,22 +3,37 @@
  * @Author: AminBy
  * @Date:   2016-10-23 23:49:20
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-24 00:55:50
+ * @Last Modified time: 2016-10-26 18:24:55
  */
 namespace ScalersTalk\Data;
+
+use \LeanCloud\Query;
+use \LeanCloud\Object;
+use \LeanCloud\CloudException;
  
-// [item] => 听写
-// [rate] => 89
-// [qqno] => 254074593
-// [itemkey] => dictate
-// [date] => 1477152000
-// [when] => 1476714131
-// [isvalid] =>
-// [isfill] => 1
+// [qqno] => 听写
+// [nick] => 89
 
 class QQUser extends Common {
 
     protected static function _gen_hash($datum) {
         return md5($datum['qqno']);
+    }
+
+    public function all() {
+        $query = new Query($this->table);
+        return $query->find();
+    }
+
+    public function nick($qqno) {
+        try {
+            $query = new Query($this->table);
+            $query->equalTo("qqno", intval($qqno));
+            $obj = $query->first();
+            return $obj->get('nick');
+        }
+        catch (CloudException $e) {
+            die($qqno . ' not found.');
+        }
     }
 }

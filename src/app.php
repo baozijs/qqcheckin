@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../src/cloud.php';
-
+require __DIR__ . '/functions.php';
 /*
  * A simple Slim based sample application
  *
@@ -18,9 +18,9 @@ use \LeanCloud\Engine\SlimEngine;
 use \LeanCloud\Query;
 use \LeanCloud\Object;
 
-use \ScalersTalk\Checkin\Auth;
-use \ScalersTalk\Checkin\Admin;
-use \ScalersTalk\Checkin\User;
+use \ScalersTalk\Checkin\Auth as ModAuth;
+use \ScalersTalk\Checkin\Admin as ModAdmin;
+use \ScalersTalk\Checkin\User as ModUser;
 use \ScalersTalk\Setting\Config;
 
 define('DEBUG', true);
@@ -42,26 +42,34 @@ $app->add(new SlimEngine());
 
 // 使用 Slim/PHP-View 作为模版引擎
 $container = $app->getContainer();
-$container["view"] = function($container) {
-    return new \Slim\Views\PhpRenderer(__DIR__ . "/views/");
+// $container["view"] = function($container) {
+//     return new \Slim\Views\PhpRenderer(__DIR__ . "/views/");
+// };
+$container['view'] = function ($c) {
+    $view = new \Slim\Views\Twig(__DIR__ . "/twigs/", [
+        // 'cache' => __DIR__ . '/../cache'
+    ]);
+
+    // Instantiate and add Slim specific extension
+    $basePath = rtrim(str_ireplace('index.php', '', $c['request']->getUri()->getBasePath()), '/');
+    $view->addExtension(new Slim\Views\TwigExtension($c['router'], $basePath));
+
+    return $view;
 };
 
-$auth = new Auth($app);
-$user = new User($app);
-
 $app->get('/', function (Request $req, Response $resp) {
-    return $this->view->render($resp, "index.phtml", ['groups' => Config::get('groups')]);
+    return $this->view->render($resp, "index.twig", ['groups' => Config::get('groups')]);
 });
 
 $app->get('/admin[/{group}]', function(Request $req, Response $resp, $args) {
-    $admin = new Admin($this);
+    $admin = new ModAdmin($this);
     // $auth->needAdmin($req, $resp, $args);
-    $admin->showAdmin($req, $resp, $args);
+    $admin->viewAll($req, $resp, $args);
 });
 
 
 $app->post('/admin/{group}/upload', function(Request $req, Response $resp, $args) {
-    $admin = new Admin($this);
+    $admin = new ModAdmin($this);
     // var_dump($files);
     // $auth->needAdmin($req, $resp, $args);
     $admin->upload($req, $resp, $args);
@@ -69,42 +77,19 @@ $app->post('/admin/{group}/upload', function(Request $req, Response $resp, $args
 
 
 $app->get('/admin/{group}/upload', function(Request $req, Response $resp, $args) {
-    $admin = new Admin($this);
+    $admin = new ModAdmin($this);
     // var_dump($files);
     // $auth->needAdmin($req, $resp, $args);
     $admin->showUpload($req, $resp, $args);
 });
 
-// 显示 todo 列表
-$app->get('/todos', function(Request $req, Response $resp) {
-    $query = new Query("Todo");
-    $query->descend("createdAt");
-    try {
-        $todos = $query->find();
-    } catch (\Exception $ex) {
-        error_log("Query todo failed!");
-        $todos = array();
-    }
-    return $this->view->render($resp, "todos.phtml", array(
-        "title" => "TODO 列表",
-        "todos" => $todos,
-    ));
-});
 
-$app->post("/todos", function(Request $req, Response $resp) {
-    $data = $req->getParsedBody();
-    $todo = new Object("Todo");
-    $todo->set("content", $data["content"]);
-    $todo->set("added", time());
-    $todo->save();
-    return $resp->withStatus(302)->withHeader("Location", "/todos");
-});
-
-$app->get('/hello/{name}', function (Request $req, Response $resp) {
-    $name = $req->getAttribute('name');
-    $resp->getBody()->write("Hello, $name");
-
-    return $resp;
+$app->get('/user/{group}/{qqno}[/between/{stdt}/{eddt}]', function(Request $req, Response $resp, $args) {
+    $user = new ModUser($this);
+    // print_r($args);die;
+    // var_dump($files);
+    // $auth->needAdmin($req, $resp, $args);
+    $user->viewByQqno($req, $resp, $args);
 });
 
 $app->run();

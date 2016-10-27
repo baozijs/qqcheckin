@@ -3,12 +3,12 @@
  * @Author: AminBy
  * @Date:   2016-10-24 01:07:49
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-24 01:24:28
+ * @Last Modified time: 2016-10-26 16:38:21
  */
 namespace ScalersTalk\Setting;
 
 class Items {
-    private const ITEMS = [
+    const ITEMS = [
         'kuang' => [
             'dictate' => [
                 'name' => '听写',

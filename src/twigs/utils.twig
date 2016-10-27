@@ -1,0 +1,35 @@
+{% macro checkin_span(c) %}
+    {% set clazz = 'do do-'~c.itemkey %}
+    {% set title = c.item %}
+
+    {% if not c.isvalid %}
+        {# 无效 #}
+        {% set clazz = clazz ~ ' do-invalid' %}
+    {% else %}
+
+        {# 正确率 #}
+        {% set title = title ~ (c.rate > 0 ? '('~c.rate~'%)' : '') %}
+
+        {# 补卡 #}
+        {% if c.isfill %}
+            {% set clazz = clazz ~ ' do-fill' %}
+            {% set title = title ~ c.when|date('(m-d补)') %}
+        {% endif %}
+    {% endif %}
+    <span class="{{ clazz }}" title="{{ title }}" data-toggle="tooltip" data-placement="top"></span>
+{% endmacro %}
+
+{% macro leave_span(c) %}
+    {% set clazz = 'do do-'~c.itemkey %}
+    {% set title = c.date|date('m-d')~'请假' %}
+    {% if not c.isvalid %}
+        {% set clazz = clazz ~ ' do-invalid' %}
+        {% set title = title ~ '('~c.when|date('m-d')~'补假无效)' %}
+        {{ _self.null_span() }}
+    {% endif %}
+    <span class="{{ clazz }}" title="{{ title }}" data-toggle="tooltip" data-placement="top"></span>
+{% endmacro %}
+
+{% macro null_span() %}
+    <span class="do do-null"></span>
+{% endmacro %}

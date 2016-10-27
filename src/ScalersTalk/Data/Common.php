@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 15:55:53
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-24 00:56:30
+ * @Last Modified time: 2016-10-26 20:50:16
  */
 
 namespace ScalersTalk\Data;
@@ -28,6 +28,12 @@ abstract class Common {
         $name = end($parsedClass);
         $this->table = ucfirst($group) . ucfirst($name).(constant('DEBUG') ? 'Debug' : '');
     }
+
+    protected static $_keys = [
+        'objectId', 'createdAt', 'updateAt'
+    ];
+    protected static $keys = [
+    ];
 
     protected static function _gen_hash($datum) {
         return md5($datum['itemkey'] .$datum['qqno'] . $datum['date']);
@@ -125,32 +131,27 @@ abstract class Common {
         return $object;
     }
 
-    public function allWithDate($begindate, $enddate) {
-        $query1 = new Query($this->table);
-        $query1->greaterThanOrEqualTo('date', $statdate);
+    protected function allWithDate($begindate, $enddate) {
 
-        $query2 = new Query($this->table);
-        $query2->lessThanOrEqualTo('date', $enddate);
-
-        $query = new Query($this->table);
-        $query->andQuery($query1, $query2);
-
-        return $query->find();
+        $cql = sprintf("select * from %s where date >= ? and date <= ?"
+            , $this->table
+        );
+        $ret = Query::doCloudQuery($cql, [$begindate, $enddate]);
+        return $ret['results'];
     }
 
-    public function singleWithDate($qqno, $begindate, $enddate) {
-        $query1 = new Query($this->table);
-        $query1->greaterThanOrEqualTo('date', $statdate);
+    protected function singleWithDate($qqno, $begindate, $enddate) {
 
-        $query2 = new Query($this->table);
-        $query2->lessThanOrEqualTo('date', $enddate);
+        $cql = sprintf("select * from %s where qqno = ? and date >= ? and date <= ?"
+            , $this->table
+        );
+        $ret = Query::doCloudQuery($cql, [intval($qqno) , $begindate , $enddate]);
+        return $ret['results'];
+    }
 
-        $query3 = new Query($this->table);
-        $query3->lessThanOrEqualTo('qqno', $qqno);
-
-        $query = new Query($this->table);
-        $query->andQuery($query1, $query2, $query3);
-
-        return $query->find();
+    public static function asArray($result) {
+        return array_map(function($object) {
+            return $object->toFullJSON();
+        }, $result);
     }
 }

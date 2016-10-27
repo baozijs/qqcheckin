@@ -1,0 +1,9 @@
+{% extends 'base.twig' %}
+
+{% block main_content %} 
+    <h1>Upload for {{ groups.group }}</h1>
+    <form action="/admin/{{ group }}/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="qqchat">
+        <input type="submit" value="Upload">
+    </form>
+{% endblock %}

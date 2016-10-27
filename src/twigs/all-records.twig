@@ -1,0 +1,48 @@
+{% extends 'base.twig' %}
+{% from 'utils.twig' import checkin_span %}
+{% from 'utils.twig' import leave_span %}
+{% from 'utils.twig' import null_span %}
+
+{%block page_title %}{{ '打卡情况' }}{% endblock %}
+
+{% block main_content %}
+    {% spaceless %}
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>{{ '<< 打卡情况 >>' }}</h1>
+            <table class="table table-checkin">
+                <tr>
+                    <th width="20%">成员/日期</th>
+                    {% for d in _range %}
+                    <th>{{ d|date('m-d') }}</th>
+                    {% endfor %}
+                </tr>
+
+                {% for qqno, nick in _qqusers %}
+                <tr>
+                    <td>{{ nick }}</td>
+
+                    {% for date in _range %}
+                    <td>
+                        {% if not _checkins[qqno][date] and not _leaves[qqno][date] %}
+                        {{ null_span() }}
+                        {% else %}
+                            {% if _checkins[qqno][date] %}
+                                {% for c in _checkins[qqno][date] %}
+                                    {{ checkin_span(c) }}
+                                {% endfor %}
+                            {% elseif _leaves[qqno][date] %}
+                                {% for c in _leaves[qqno][date] %}
+                                    {{ leave_span(c) }}
+                                {% endfor %}
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    {% endspaceless %}
+{% endblock %}

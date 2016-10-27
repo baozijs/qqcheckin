@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 12:09:39
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-23 16:06:11
+ * @Last Modified time: 2016-10-26 12:01:32
  */
 namespace ScalersTalk\Data;
 
@@ -15,4 +15,10 @@ namespace ScalersTalk\Data;
 // [date] => 1476806400
 
 class Leave extends Common{
+    public function allWithDate($begindate, $enddate) {
+        return parent::allWithDate($begindate, $enddate);
+    }
+    public function singleWithDate($qqno, $begindate, $enddate) {
+        return parent::singleWithDate($qqno, $begindate, $enddate);
+    }
 }

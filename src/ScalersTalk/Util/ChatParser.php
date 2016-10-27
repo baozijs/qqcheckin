@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:52:25
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-24 01:04:06
+ * @Last Modified time: 2016-10-26 20:28:57
  */
 
 namespace ScalersTalk\Util;
@@ -134,7 +134,8 @@ class ChatParser {
         // 无相应的资料记录无效 补5天以上的补卡无效
         $checkin['isvalid'] = $is_valid($checkin, $chats_raw, $index) && abs(strtotime(date('Y-m-d', $chat['when'])) - $checkin['date']) < 518400;
         // 是否补卡
-        $checkin['isfill'] = date('Ymd', $checkin['date']) != date('Ymd', $chat['when']);
+        // $checkin['isfill'] = date('Ymd', $checkin['date']) != date('Ymd', $chat['when']);
+        $checkin['isfill'] = date('Ymd', $checkin['date']) < date('Ymd', $chat['when']);
         // unset($checkin['month']);
         // unset($checkin['day']);
         // unset($checkin['origin']);
