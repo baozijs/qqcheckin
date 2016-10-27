@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-27 09:21:42
+ * @Last Modified time: 2016-10-27 18:29:06
  */
 namespace ScalersTalk\Checkin;
 
@@ -61,18 +61,27 @@ class Admin extends CheckinBase {
             die('qq users is empty');
         }
 
-        $_leaves = DataLeave::asArray($dataLeave->allWithDate(time()-604800, time()));
-        $_checkins = DataCheckin::asArray($dataCheckin->allWithDate(time()-604800, time()));
+        $query = $req->getQueryParams();
+        if(empty($query['dateRange'])) {
+            $start = "sun last week";
+            $end = "sat this week";
+        }
+        else {
+            list($start, $end) = explode(' to ', $query['dateRange']);
+        }
+        $start = strtotime($start);
+        $end = strtotime($end);
 
-        $dates = array_merge(array_column($_checkins, 'date'), array_column($_leaves, 'date'), [strtotime('today')]);
-        $mindate = min($dates);
-        $maxdate = max($dates);
+        $args += compact('start', 'end');
+
+        $_leaves = DataLeave::asArray($dataLeave->allWithDate($start, $end));
+        $_checkins = DataCheckin::asArray($dataCheckin->allWithDate($start, $end));
 
         $_qqusers = array_column($_qqusers, 'nick', 'qqno');
         $_leaves = \array_group_by($_leaves, 'qqno', 'date');
         $_checkins = \array_group_by($_checkins, 'qqno', 'date');
 
-        $args['_range'] = range($mindate, $maxdate, 86400);
+        $args['_range'] = range($start, $end, 86400);
 
         $args['_checkins'] = $_checkins;
         $args['_leaves'] = $_leaves;

@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:53:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-27 00:58:13
+ * @Last Modified time: 2016-10-27 18:30:23
  */
 namespace ScalersTalk\Checkin;
 
@@ -35,19 +35,31 @@ class User extends CheckinBase {
             die("user {$qqno} has no records.");
         }
 
-        $_leaves = DataLeave::asArray($dataLeave->singleWithDate($qqno, 0, time()));
+        $query = $req->getQueryParams();
+        if(empty($query['dateRange'])) {
+            $start = "sun last week";
+            $end = "sat this week";
+        }
+        else {
+            list($start, $end) = explode(' to ', $query['dateRange']);
+        }
+        $start = strtotime($start);
+        $end = strtotime($end);
+
+        $args += compact('start', 'end');
+
+        $_leaves = DataLeave::asArray($dataLeave->singleWithDate($qqno, $start, $end));
         $_leaves = \array_group_by($_leaves, 'date');
 
-        $_checkins = DataCheckin::asArray($dataCheckin->singleWithDate($qqno, 0, time()));
+        $_checkins = DataCheckin::asArray($dataCheckin->singleWithDate($qqno, $start, $end));
         $_checkins = \array_group_by($_checkins, 'date');
 
         // print_r($_checkins); die;
 
-        $mindate = min(array_merge(array_keys($_checkins), array_keys($_leaves), [strtotime('today')]));
-        $maxdate = max(array_merge(array_keys($_checkins), array_keys($_leaves), [strtotime('today')]));
+        // $mindate = min(array_merge(array_keys($_checkins), array_keys($_leaves), [strtotime('today')]));
+        // $maxdate = max(array_merge(array_keys($_checkins), array_keys($_leaves), [strtotime('today')]));
 
-        $args['_range'] = range($maxdate, $mindate, 86400);
-
+        $args['_range'] = range($end, $start, 86400);
         $args['_checkins'] = $_checkins;
         $args['_leaves'] = $_leaves;
         $args['_nick'] = $_nick;

@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:30
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-16 17:23:32
+ * @Last Modified time: 2016-10-27 17:01:00
  */
 namespace ScalersTalk\Checkin;
 
@@ -18,5 +18,5 @@ use \LeanCloud\Object;
 
 class Auth extends CheckinBase {
 
-
+    function needAdmin() {}
 }

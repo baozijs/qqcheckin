@@ -5,6 +5,7 @@
     {% if not c.isvalid %}
         {# 无效 #}
         {% set clazz = clazz ~ ' do-invalid' %}
+        {% set title = title ~ '('~c.when|date('m-d')~'补)(超过5天补卡无效)' %}
     {% else %}
 
         {# 正确率 #}
@@ -24,7 +25,7 @@
     {% set title = c.date|date('m-d')~'请假' %}
     {% if not c.isvalid %}
         {% set clazz = clazz ~ ' do-invalid' %}
-        {% set title = title ~ '('~c.when|date('m-d')~'补假无效)' %}
+        {% set title = title ~ '('~c.when|date('m-d')~'向前补假无效)' %}
         {{ _self.null_span() }}
     {% endif %}
     <span class="{{ clazz }}" title="{{ title }}" data-toggle="tooltip" data-placement="top"></span>
@@ -32,4 +33,11 @@
 
 {% macro null_span() %}
     <span class="do do-null"></span>
+{% endmacro %}
+
+{% macro weekpicker(cid, start, end) %}
+<div class="input-group" >
+  <input data-weekpicker="weekpicker" data-months="1" value="{{ start|date("y-m-d") }} to {{ end|date("y-m-d") }}" class="form-control" name="dateRange" id="{{ cid }}"/>
+  <div class="input-group-addon" data-weekpicker="weekpicker" data-target="#{{ cid }}"><i class="glyphicon glyphicon-calendar"></i></div>
+</div>
 {% endmacro %}

@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 15:55:53
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-26 20:50:16
+ * @Last Modified time: 2016-10-27 18:25:18
  */
 
 namespace ScalersTalk\Data;
@@ -71,6 +71,9 @@ abstract class Common {
     }
 
     public function batch_save($data) {
+        if(empty($data)) {
+            debug_print_backtrace();die;
+        }
         foreach($data as &$datum) {
             $datum['hash'] = static::_gen_hash($datum);
         }
@@ -89,7 +92,8 @@ abstract class Common {
             return $this->create($obj, true);
         }, $data);
 
-        Object::saveAll(array_merge($exists, $objects));
+        $objects = array_merge($exists, $objects);
+        Object::saveAll($objects);
     }
 
     public function update($object, $datum, $batch = false) {

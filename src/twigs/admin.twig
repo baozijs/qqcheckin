@@ -1,11 +1,12 @@
 {% extends 'base.twig' %}
 
 {% block main_content %} 
-    {% if group %}
-    {% else %}
-        <h1>Administration</h1>
-        {% for key, name in groups %}
-          <p>{{ name }} <a href="/admin/{{ key }}/upload">Upload</a> <a href="/admin/{{ key }}/view">View</a></p>
-        {% endfor %}
-    {% endif %}
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>Administration</h1>
+            {% for key, name in groups %}
+              <p>{{ name }} <a class="btn btn-default" href="/admin/{{ key }}/upload">Upload</a> <a class="btn btn-default"  href="/admin/{{ key }}/view">View</a></p>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

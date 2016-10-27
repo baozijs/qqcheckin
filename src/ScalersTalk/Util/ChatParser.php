@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:52:25
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-26 20:28:57
+ * @Last Modified time: 2016-10-27 18:28:02
  */
 
 namespace ScalersTalk\Util;
@@ -310,13 +310,11 @@ class ChatParser {
         return $this->qqno_nicks;
     }
     public function getQqusers() {
-        $qqnos = array_merge(array_column($this->checkins, 'qqno'), array_column($this->leaves, 'qqno'));
-        $qqno_nicks = array_intersect_key($this->qqno_nicks, array_flip($qqnos));
-
         return array_map(function($qqno, $nick) {
             return compact('qqno', 'nick');
-        }, array_keys($qqno_nicks)
-        , array_values($qqno_nicks));
+        }
+        , array_keys($this->qqno_nicks)
+        , array_values($this->qqno_nicks));
     }
     public function getQqnoChatRaws() {
         return $this->qqno_chats_raw;

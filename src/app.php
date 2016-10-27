@@ -61,34 +61,34 @@ $app->get('/', function (Request $req, Response $resp) {
     return $this->view->render($resp, "index.twig", ['groups' => Config::get('groups')]);
 });
 
-$app->get('/admin[/{group}]', function(Request $req, Response $resp, $args) {
+$app->get('/admin/{group}/view', function(Request $req, Response $resp, $args) {
     $admin = new ModAdmin($this);
-    // $auth->needAdmin($req, $resp, $args);
+    $auth = new ModAuth($this);
+
+    $auth->needAdmin($req, $resp, $args);
     $admin->viewAll($req, $resp, $args);
 });
 
 
 $app->post('/admin/{group}/upload', function(Request $req, Response $resp, $args) {
     $admin = new ModAdmin($this);
-    // var_dump($files);
-    // $auth->needAdmin($req, $resp, $args);
+    $auth = new ModAuth($this);
+
+    $auth->needAdmin($req, $resp, $args);
     $admin->upload($req, $resp, $args);
 });
 
 
 $app->get('/admin/{group}/upload', function(Request $req, Response $resp, $args) {
     $admin = new ModAdmin($this);
-    // var_dump($files);
-    // $auth->needAdmin($req, $resp, $args);
+    $auth = new ModAuth($this);
+    $auth->needAdmin($req, $resp, $args);
     $admin->showUpload($req, $resp, $args);
 });
 
 
-$app->get('/user/{group}/{qqno}[/between/{stdt}/{eddt}]', function(Request $req, Response $resp, $args) {
+$app->get('/user/{group}/{qqno}', function(Request $req, Response $resp, $args) {
     $user = new ModUser($this);
-    // print_r($args);die;
-    // var_dump($files);
-    // $auth->needAdmin($req, $resp, $args);
     $user->viewByQqno($req, $resp, $args);
 });
 

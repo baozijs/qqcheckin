@@ -2,6 +2,7 @@
 {% from 'utils.twig' import checkin_span %}
 {% from 'utils.twig' import leave_span %}
 {% from 'utils.twig' import null_span %}
+{% from 'utils.twig' import weekpicker %}
 
 {%block page_title %}{{ '打卡情况' }}{% endblock %}
 
@@ -10,11 +11,20 @@
     <div class="row">
         <div class="col-xs-12">
             <h1>{{ '<< 打卡情况 >>' }}</h1>
+            <form class="form-inline" role="form">
+                <div class="form-group">
+                    {{ weekpicker('userweekpick', start, end) }}
+                </div>
+                <button type="submit" class="btn btn-primary">Go</button>
+            </form>
+            <br>
+        </div>
+        <div class="col-xs-12">
             <table class="table table-checkin">
                 <tr>
                     <th width="20%">成员/日期</th>
                     {% for d in _range %}
-                    <th>{{ d|date('m-d') }}</th>
+                    <th>{{ d|date('D (m-d)') }}</th>
                     {% endfor %}
                 </tr>
 

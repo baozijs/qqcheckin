@@ -2,6 +2,7 @@
 {% from 'utils.twig' import checkin_span %}
 {% from 'utils.twig' import leave_span %}
 {% from 'utils.twig' import null_span %}
+{% from 'utils.twig' import weekpicker %}
 
 {%block page_title %}{{ _nick }}{% endblock %}
 
@@ -9,6 +10,15 @@
     <div class="row">
         <div class="col-xs-12">
             <h1>{{ '<< '~_nick~' >>' }}</h1>
+            <form class="form-inline" role="form">
+                <div class="form-group">
+                    {{ weekpicker('userweekpick', start, end) }}
+                </div>
+                <button type="submit" class="btn btn-primary">Go</button>
+            </form>
+            <br>
+        </div>
+        <div class="col-xs-12">
             <table class="table table-checkin">
                 <tr>
                     <th width="20%">日期</th>
@@ -16,10 +26,10 @@
                 </tr>
                 {% for date in _range %}
                 <tr>
-                    <td>{{ date|date('Y-m-d') }}</td>
+                    <td>{{ date|date('D (m-d)') }}</td>
                     <td>
                         {% if not _checkins[date] and not _leaves[date] %}
-                        {% null_span()%}
+                        {{ null_span() }}
                         {% else %}
                             {% if _checkins[date] %}
                                 {% for c in _checkins[date] %}
