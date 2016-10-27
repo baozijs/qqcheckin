@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 12:09:39
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-26 12:03:22
+ * @Last Modified time: 2016-10-28 01:18:11
  */
 namespace ScalersTalk\Data;
  

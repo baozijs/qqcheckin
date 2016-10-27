@@ -1,0 +1,29 @@
+{% extends 'base.twig' %}
+
+{% block page_title %}Login{% endblock %}
+
+{% block main_content %} 
+    <div class="row">
+        <div class="col-xs-12">
+        <h1>{{ '<<'~_start|date('m-d')~'~'~_end|date('m-d')~'统计'~'>>' }}</h1>
+        </div>
+        <div class="col-xs-12">
+            <table class="table">
+                <tr>
+                    <th>成员/项目</th>
+                    {% for i in _items %}
+                    <th>{{ i.name }}</th>
+                    {% endfor %}
+                </tr>
+                {% for qqno, res in _result %}
+                <tr>
+                    <th>{{ _qqusers[qqno] }}</th>
+                    {% for ik,iv in _items %}
+                    <td>{{ res[ik] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}

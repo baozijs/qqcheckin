@@ -5,7 +5,12 @@
         <div class="col-xs-12">
             <h1>Administration</h1>
             {% for key, name in groups %}
-              <p>{{ name }} <a class="btn btn-default" href="/admin/{{ key }}/upload">Upload</a> <a class="btn btn-default"  href="/admin/{{ key }}/view">View</a></p>
+              <div>
+              <h2>{{ name }}</h2>
+              <a class="btn btn-default btn-xs" href="{{ path_for('admin-upload', {group: key}) }}">Upload Chat Records</a>
+              <a class="btn btn-default btn-xs"  href="{{ path_for('admin-view', {group: key}) }}">View recent data</a>
+              <a class="btn btn-default btn-xs"  href="{{ path_for('admin-statistics', {group: key}) }}">Statistics</a>
+              </div>
             {% endfor %}
         </div>
     </div>

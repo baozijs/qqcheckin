@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:53:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-27 18:30:23
+ * @Last Modified time: 2016-10-28 01:19:22
  */
 namespace ScalersTalk\Checkin;
 
@@ -64,6 +64,6 @@ class User extends CheckinBase {
         $args['_leaves'] = $_leaves;
         $args['_nick'] = $_nick;
 
-        $this->app->view->render($resp, "user-records.twig", $args);
+        return $this->app->view->render($resp, "user-records.twig", $args);
     }
 }
