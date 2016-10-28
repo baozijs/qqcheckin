@@ -5,21 +5,38 @@
 {% block main_content %} 
     <div class="row">
         <div class="col-xs-12">
-        <h1>{{ '<<'~_start|date('m-d')~'~'~_end|date('m-d')~'统计'~'>>' }}</h1>
+        <h1>{{ '<<'~'最近5周统计('~_start|date('m-d')~'~'~_end|date('m-d')~')>>' }}</h1>
         </div>
         <div class="col-xs-12">
             <table class="table">
                 <tr>
                     <th>成员/项目</th>
+                    <th>{{ '总 计'}}</th>
+                    {% for i in range(5, 1) %}
+                    <th>{{ '第'~i~'周'}}</th>
+                    {% endfor %}
                     {% for i in _items %}
                     <th>{{ i.name }}</th>
                     {% endfor %}
                 </tr>
-                {% for qqno, res in _result %}
+                {% for qqno, res2 in _statistics2 %}
+                {% set res1 = _statistics1[qqno] %}
+
+                {% set sum = 0 %}
+                {% for r in res2 %}
+                {% set sum = sum + r %}
+                {% endfor %}
+
                 <tr>
-                    <th>{{ _qqusers[qqno] }}</th>
+                    <th>
+                    <a href="{{ path_for('user-view', {group: group, qqno: qqno}) }}">{{ _qqusers[qqno] }}</a>
+                    </th>
+                    <td>{{ sum }}</td>
+                    {% for r in res2 %}
+                    <td>{{ r }}</td>
+                    {% endfor %}
                     {% for ik,iv in _items %}
-                    <td>{{ res[ik] }}</td>
+                    <td>{{ res1[ik] }}</td>
                     {% endfor %}
                 </tr>
                 {% endfor %}

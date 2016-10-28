@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-28 01:52:14
+ * @Last Modified time: 2016-10-28 13:37:25
  */
 namespace ScalersTalk\Checkin;
 
@@ -65,8 +65,8 @@ class Admin extends CheckinBase {
 
         $query = $req->getQueryParams();
         if(empty($query['dateRange'])) {
-            $start = "sun last week";
-            $end = "sat this week";
+            $start = "last sun";
+            $end = "this sat";
         }
         else {
             list($start, $end) = explode(' to ', $query['dateRange']);
@@ -76,8 +76,8 @@ class Admin extends CheckinBase {
 
         $args += compact('start', 'end');
 
-        $_leaves = DataLeave::asArray($dataLeave->allWithDate($start, $end));
         $_checkins = DataCheckin::asArray($dataCheckin->allWithDate($start, $end));
+        $_leaves = DataLeave::asArray($dataLeave->allWithDate($start, $end));
 
         $_qqusers = array_column($_qqusers, 'nick', 'qqno');
         $_leaves = \array_group_by($_leaves, 'qqno', 'date');
@@ -97,15 +97,10 @@ class Admin extends CheckinBase {
         $dataLeave = new DataLeave($args['group']);
         $dataQQUser = new DataQQUser($args['group']);
 
-        $end = strtotime('last sun');
-        $start = strtotime('-2 months', $end);
+        $end = strtotime('last sat');
+        $start = strtotime('-5 weeks +1 day', $end);
 
-        $items = [
-            'jobs' => [
-                'name' => '总打卡',
-                'valid' => false,
-                ]
-            ] + Items::get($args['group']) + [
+        $items = Items::get($args['group']) + [
             'leave' => [
                 'name' => '请假',
                 'valid' => false,
@@ -115,31 +110,33 @@ class Admin extends CheckinBase {
         $_qqusers = DataQQUser::asArray($dataQQUser->all());
 
         $_qqnos = array_column($_qqusers, 'qqno');
-        $_result = array_combine($_qqnos, array_fill(0, count($_qqnos), array_combine($itemkeys, array_fill(0, count($itemkeys), 0))));
+        $_statistics1 = array_combine($_qqnos, array_fill(0, count($_qqnos), array_combine($itemkeys, array_fill(0, count($itemkeys), 0))));
+
+        $_statistics2 = array_combine($_qqnos, array_fill(0, count($_qqnos), array_combine(array_reverse(range($start, $end, 604800)), array_fill(0, 5, 0))));
 
         $_leaves = $dataLeave->allWithDate($start, $end);
         $_checkins = $dataCheckin->allWithDate($start, $end);
-        array_map(function($obj) use(&$_result) {
+        array_map(function($obj) use(&$_statistics1, &$_statistics2) {
             if($obj->get('isvalid')) {
-                $_result[$obj->get('qqno')][$obj->get('itemkey')] += 1;
+                $_statistics1[$obj->get('qqno')][$obj->get('itemkey')] += 1;
             }
             if($obj->get('itemkey') != 'leave') {
-                $_result[$obj->get('qqno')]['jobs'] += 1;
+                $_statistics2[$obj->get('qqno')][strtotime('last sun', $obj->get('date'))] += 1;
             }
         }, array_merge($_leaves, $_checkins));
 
-        uasort($_result, function($a, $b) {
-            if($a['jobs'] == $b['jobs'] && $a['leave'] == $b['leave']) {
+        uasort($_statistics2, function($a, $b) {
+            $sa = array_sum($a);
+            $sb = array_sum($b);
+            if($sa == $sb) {
                 return 0;
             }
-            if($a['jobs'] == $b['jobs']) {
-                return $a['leave'] > $b['leave'] ? -1 : 1;
-            }
-            return $a['jobs'] > $b['jobs'] ? -1 : 1;
+            return $sa < $sb ? 1 : -1;
         });
 
         $args['_items'] = $items;
-        $args['_result'] = $_result;
+        $args['_statistics1'] = $_statistics1;
+        $args['_statistics2'] = $_statistics2;
         $args['_qqusers'] = array_column($_qqusers, 'nick', 'qqno');
         $args['_start'] = $start;
         $args['_end'] = $end;

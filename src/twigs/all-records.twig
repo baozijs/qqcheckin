@@ -30,7 +30,7 @@
 
                 {% for qqno, nick in _qqusers %}
                 <tr>
-                    <td>{{ nick }}</td>
+                    <td> <a href="{{ path_for('user-view', {group: group, qqno: qqno}) }}">{{ nick }}</a></td>
 
                     {% for date in _range %}
                     <td>

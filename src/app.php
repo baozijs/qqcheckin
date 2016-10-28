@@ -107,7 +107,7 @@ $app->get('/admin/{group}/upload', function(Request $req, Response $resp, $args)
 
 
 $app->get('/user/{group}/{qqno}', function(Request $req, Response $resp, $args) {
-    $user->viewByQqno($req, $resp, $args);
+    (new ModUser($this))->viewByQqno($req, $resp, $args);
 })->setName('user-view');
 
 $app->run();
