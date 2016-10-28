@@ -10,19 +10,20 @@
     {% spaceless %}
     <div class="row">
         <div class="col-xs-12">
-            <h1>{{ '<< 打卡情况 >>' }}</h1>
+            <h1>{{ '<< 打卡情况 ('~start|date('m.d')~'~'~end|date('m.d')~') >>' }}</h1>
             <form class="form-inline" role="form">
                 <div class="form-group">
                     {{ weekpicker('userweekpick', start, end) }}
                 </div>
                 <button type="submit" class="btn btn-primary">Go</button>
+                &nbsp;<a href="{{ path_for('admin-home') }}" class="btn btn-default">back to dashboard</a>
             </form>
             <br>
         </div>
         <div class="col-xs-12">
-            <table class="table table-checkin">
+            <table class="table table-striped table-condensed">
                 <tr>
-                    <th width="20%">成员/日期</th>
+                    <th width="20%" class="text-right">成员/日期</th>
                     {% for d in _range %}
                     <th>{{ d|date('D (m-d)') }}</th>
                     {% endfor %}
@@ -30,7 +31,7 @@
 
                 {% for qqno, nick in _qqusers %}
                 <tr>
-                    <td> <a href="{{ path_for('user-view', {group: group, qqno: qqno}) }}">{{ nick }}</a></td>
+                    <td class="text-right"> <a href="{{ path_for('user-view', {group: group, qqno: qqno}) }}">{{ nick }}</a></td>
 
                     {% for date in _range %}
                     <td>

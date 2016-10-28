@@ -62,7 +62,10 @@ $app->get('/', function (Request $req, Response $resp) {
     return $this->view->render($resp, "index.twig", ['groups' => Config::get('groups')]);
 })->setName('home');
 
-$app->get('/admin', function (Request $req, Response $resp, $args) {
+$app->get('/admin[/superadmin/{superadmin}]', function (Request $req, Response $resp, $args) {
+    if($res = (new ModAuth($this))->needAdmin($req, $resp, $args)) {
+        return $res;
+    }
     return (new ModAdmin($this))->showAdmin($req, $resp, $args);
 })->setName('admin-home');
 

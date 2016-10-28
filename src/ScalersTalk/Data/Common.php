@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 15:55:53
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-28 13:05:03
+ * @Last Modified time: 2016-10-28 16:29:34
  */
 
 namespace ScalersTalk\Data;
@@ -186,9 +186,12 @@ abstract class Common {
             $skip += self::PACKNUM;
         }
         while(count($ret['results']) == self::PACKNUM);
+
+        return $objects;
     }
 
     public static function asArray($result) {
+        is_array($result) || $result = [];
         return array_map(function($object) {
             return $object->toFullJSON();
         }, $result);

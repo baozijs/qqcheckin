@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-28 13:37:25
+ * @Last Modified time: 2016-10-28 14:22:23
  */
 namespace ScalersTalk\Checkin;
 
@@ -31,6 +31,7 @@ class Admin extends CheckinBase {
     public function upload(Request $req, Response $resp, $args) {
         $groups = Config::get('groups');
 
+        // 获取上传的文件
         $files = $req->getUploadedFiles();
         if(empty($files['qqchat'])) {
             die('file qqchat is empty!');
@@ -39,9 +40,12 @@ class Admin extends CheckinBase {
             die('illegal group value!');
         }
         $tmpfile = $files['qqchat']->file;
+
+        // 解析上传的文件
         $chatParser = new ChatParser($tmpfile, Items::get($args['group']), 0);
         $chatParser->parse();
 
+        // 保存
         $dataCheckin = new DataCheckin($args['group']);
         $dataLeave = new DataLeave($args['group']);
         $dataQQuser = new DataQQUser($args['group']);
@@ -50,9 +54,11 @@ class Admin extends CheckinBase {
         $dataCheckin->batch_save($chatParser->checkins);
         $dataQQuser->batch_save($chatParser->getQqusers());
 
+        // 跳转到看最近一周的数据
         return $resp->withStatus(302)->withHeader('Location', $this->app->router->pathFor('admin-view', $args));
     }
 
+    // 最近一周的数据
     public function viewAll(Request $req, Response $resp, $args) {
         $dataCheckin = new DataCheckin($args['group']);
         $dataLeave = new DataLeave($args['group']);
@@ -63,6 +69,7 @@ class Admin extends CheckinBase {
             die('qq users is empty');
         }
 
+        // 起止时间
         $query = $req->getQueryParams();
         if(empty($query['dateRange'])) {
             $start = "last sun";
@@ -76,15 +83,34 @@ class Admin extends CheckinBase {
 
         $args += compact('start', 'end');
 
+        // 获取数据
         $_checkins = DataCheckin::asArray($dataCheckin->allWithDate($start, $end));
-        $_leaves = DataLeave::asArray($dataLeave->allWithDate($start, $end));
-
-        $_qqusers = array_column($_qqusers, 'nick', 'qqno');
-        $_leaves = \array_group_by($_leaves, 'qqno', 'date');
         $_checkins = \array_group_by($_checkins, 'qqno', 'date');
 
-        $args['_range'] = range($start, $end, 86400);
+        $_leaves = DataLeave::asArray($dataLeave->allWithDate($start, $end));
+        $_leaves = \array_group_by($_leaves, 'qqno', 'date');
 
+        $_qqusers = array_column($_qqusers, 'nick', 'qqno');
+
+        // 排序
+        uksort($_qqusers, function($a, $b) use($_checkins, $_leaves) {
+            $vac = empty($_checkins[$a]) ? 0 : array_sum(array_map(function($v) {
+                return count($v);
+            }, $_checkins[$a]));
+            $vbc = empty($_checkins[$b]) ? 0 : array_sum(array_map(function($v) {
+                return count($v);
+            }, $_checkins[$b]));
+            $val = empty($_leaves[$a]) ? 0 : count($_leaves[$a]);
+            $vbl = empty($_leaves[$b]) ? 0 : count($_leaves[$b]);
+
+            if($vac == $vbc) {
+                return $val > $vbl ? -1 : 1;
+            };
+            return $vac > $vbc ? -1 : 1;
+        });
+
+        // 绑定数据
+        $args['_range'] = range($start, $end, 86400);
         $args['_checkins'] = $_checkins;
         $args['_leaves'] = $_leaves;
         $args['_qqusers'] = $_qqusers;
@@ -97,9 +123,11 @@ class Admin extends CheckinBase {
         $dataLeave = new DataLeave($args['group']);
         $dataQQUser = new DataQQUser($args['group']);
 
+        // 起止时间
         $end = strtotime('last sat');
         $start = strtotime('-5 weeks +1 day', $end);
 
+        // 项目
         $items = Items::get($args['group']) + [
             'leave' => [
                 'name' => '请假',
@@ -108,14 +136,17 @@ class Admin extends CheckinBase {
             ];
         $itemkeys = array_keys($items);
         $_qqusers = DataQQUser::asArray($dataQQUser->all());
-
         $_qqnos = array_column($_qqusers, 'qqno');
-        $_statistics1 = array_combine($_qqnos, array_fill(0, count($_qqnos), array_combine($itemkeys, array_fill(0, count($itemkeys), 0))));
 
+        // 要统计的数据, _statistics1是各项目的数据, _statistics2是每周的数据
+        $_statistics1 = array_combine($_qqnos, array_fill(0, count($_qqnos), array_combine($itemkeys, array_fill(0, count($itemkeys), 0))));
         $_statistics2 = array_combine($_qqnos, array_fill(0, count($_qqnos), array_combine(array_reverse(range($start, $end, 604800)), array_fill(0, 5, 0))));
 
+        // 获得数据
         $_leaves = $dataLeave->allWithDate($start, $end);
         $_checkins = $dataCheckin->allWithDate($start, $end);
+
+        // 统计
         array_map(function($obj) use(&$_statistics1, &$_statistics2) {
             if($obj->get('isvalid')) {
                 $_statistics1[$obj->get('qqno')][$obj->get('itemkey')] += 1;
@@ -125,6 +156,7 @@ class Admin extends CheckinBase {
             }
         }, array_merge($_leaves, $_checkins));
 
+        // 排序
         uasort($_statistics2, function($a, $b) {
             $sa = array_sum($a);
             $sb = array_sum($b);
@@ -134,6 +166,7 @@ class Admin extends CheckinBase {
             return $sa < $sb ? 1 : -1;
         });
 
+        // 绑定数据
         $args['_items'] = $items;
         $args['_statistics1'] = $_statistics1;
         $args['_statistics2'] = $_statistics2;

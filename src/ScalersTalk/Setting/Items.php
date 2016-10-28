@@ -3,12 +3,12 @@
  * @Author: AminBy
  * @Date:   2016-10-24 01:07:49
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-26 16:38:21
+ * @Last Modified time: 2016-10-28 16:32:46
  */
 namespace ScalersTalk\Setting;
 
 class Items {
-    const ITEMS = [
+    static $ITEMS = [
         'kuang' => [
             'dictate' => [
                 'name' => '听写',
@@ -52,6 +52,6 @@ class Items {
     ];
 
     public static function get($group) {
-        return empty(self::ITEMS[$group]) ? [] : self::ITEMS[$group];
+        return empty(self::$ITEMS[$group]) ? [] : self::$ITEMS[$group];
     }
 }
