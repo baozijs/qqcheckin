@@ -37,8 +37,7 @@
 
 {% macro weekpicker(cid, start, end) %}
 <div class="input-group" >
-  <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-  <input data-weekpicker="weekpicker" data-months="1" value="{{ start|date("y-m-d") }} to {{ end|date("y-m-d") }}" class="form-control" name="dateRange" id="{{ cid }}"/>
+  <div class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></div>
+  <input data-weekpicker="weekpicker" data-months="1" value="{{ start|date("y-m-d") }} to {{ end|date("y-m-d") }}" class="form-control" name="dateRange" id="{{ cid }}" readonly style="background-color: white"/>
 </div>
-&nbsp;
 {% endmacro %}

@@ -1,9 +1,11 @@
 {% extends 'base.twig' %}
 
+{% block page_title %}首页{% endblock %}
+
 {% block main_content %} 
     <div class="row">
-        <div class="col-xs-12">
-            <h1>打卡</h1>
+        <div class="col-md-12">
+            <h1>首页</h1>
             <div>
                 <span class="do do-dictate"></span>
                 <span class="do do-note"></span>
@@ -23,6 +25,26 @@
                 <span class="do do-fill do-review"></span>
                 <span class="do do-fill do-leave"></span>
                 <span class="do do-fill do-null"></span>
+            </div>
+            <div>
+                <span class="do do-invalid do-dictate"></span>
+                <span class="do do-invalid do-note"></span>
+                <span class="do do-invalid do-read"></span>
+                <span class="do do-invalid do-recite"></span>
+                <span class="do do-invalid do-write"></span>
+                <span class="do do-invalid do-review"></span>
+                <span class="do do-invalid do-leave"></span>
+                <span class="do do-invalid do-null"></span>
+            </div>
+            <div>
+                <span class="do do-error do-dictate"></span>
+                <span class="do do-error do-note"></span>
+                <span class="do do-error do-read"></span>
+                <span class="do do-error do-recite"></span>
+                <span class="do do-error do-write"></span>
+                <span class="do do-error do-review"></span>
+                <span class="do do-error do-leave"></span>
+                <span class="do do-error do-null"></span>
             </div>
         </div>
     </div>

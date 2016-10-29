@@ -58,6 +58,14 @@ $container['view'] = function ($c) {
     return $view;
 };
 
+$app->add(function ($request, $response, $next) {
+    (new ModAuth($this))->setIfAdminForView();
+    $response = $next($request, $response);
+    // $response->getBody()->write('AFTER');
+    return $response;
+});
+
+
 $app->get('/', function (Request $req, Response $resp) {
     return $this->view->render($resp, "index.twig", ['groups' => Config::get('groups')]);
 })->setName('home');
@@ -109,8 +117,8 @@ $app->get('/admin/{group}/upload', function(Request $req, Response $resp, $args)
 })->setName('admin-upload');
 
 
-$app->get('/user/{group}/{qqno}', function(Request $req, Response $resp, $args) {
-    (new ModUser($this))->viewByQqno($req, $resp, $args);
+$app->get('/user/{group}[/{qqno}]', function(Request $req, Response $resp, $args) {
+    return (new ModUser($this))->viewByQqno($req, $resp, $args);
 })->setName('user-view');
 
 $app->run();

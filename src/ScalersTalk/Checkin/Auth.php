@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:30
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-28 01:10:57
+ * @Last Modified time: 2016-10-30 00:39:25
  */
 namespace ScalersTalk\Checkin;
 
@@ -19,8 +19,7 @@ use \LeanCloud\Object;
 class Auth extends CheckinBase {
     const KEY = '_CHECKINUSER';
     public function needAdmin(Request $req, Response $resp, $args) {
-        if(empty($_SESSION[self::KEY]) 
-            || empty($_SESSION[self::KEY]['type'])
+        if( !isset($_SESSION[self::KEY]['type'])
             || $_SESSION[self::KEY]['type'] != 'admin') {
             return $resp->withStatus(302)->withHeader('Location', $this->app->router->pathFor('auth-login'));
         }
@@ -36,6 +35,13 @@ class Auth extends CheckinBase {
                 'user' => $user,
             ];
             return $resp->withStatus(302)->withHeader('Location', $this->app->router->pathFor('admin-home'));
+        }
+    }
+
+    public function setIfAdminForView() {
+        // print_r($_SESSION); die;
+        if(isset($_SESSION[self::KEY]['type']) && $_SESSION[self::KEY]['type'] != 'admin') {
+            $this->app->view['isadmin'] = true;
         }
     }
 }

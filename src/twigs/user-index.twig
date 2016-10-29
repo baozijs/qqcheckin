@@ -1,0 +1,35 @@
+{% extends 'base.twig' %}
+{% from 'utils.twig' import weekpicker %}
+
+{% block page_title %}Entrance{% endblock %}
+
+{% block main_content %} 
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Entrance</h1>
+            <form role="form">
+                <div class="form-group">
+                    <label>Pick a week: </label>
+                    {{ weekpicker('userweekpick', start, end) }}
+                </div>
+                <div class="form-group">
+                    <label>QQ No: </label>
+                    <input id="inputViewUser" type="text" class="form-control" placeholder="QQ Number" />
+                </div>
+                <button type="submit" class="btn btn-primary" id="btnViewUser">Go</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        $(function(){
+            $('#btnViewUser').on('click', function() {
+                if($('#inputViewUser').val().length < 5) {
+                    alert('Please input QQ Number.');
+                    return false;
+                }
+                var action = "{{ path_for('user-view', {group: group, qqno: '#qqno#'})}}".replace('#qqno#', $('#inputViewUser').val());
+                $(this).parents("form").attr({action: action}).submit();
+            });
+        });
+    </script>
+{% endblock %}

@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 15:55:53
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-28 16:29:34
+ * @Last Modified time: 2016-10-30 01:03:17
  */
 
 namespace ScalersTalk\Data;
@@ -21,7 +21,7 @@ use \LeanCloud\CloudException;
 // [date] => 1476806400
 
 abstract class Common {
-    const PACKNUM = 300;
+    const PACKNUM = 1000;
 
     protected $table;
     public function __construct($group) {
@@ -42,19 +42,27 @@ abstract class Common {
 
     protected function remove_exists($hashes) {
         try {
-            $cql = sprintf("select objectId from %s where hash in (%s) limit ?, %d"
-                , $this->table
-                , implode(', ', array_fill(0, count($hashes), '?'))
-                , self::PACKNUM
-            );
+            if(empty($hashes)) {
+                return;
+            }
+
             $exists = [];
+            $skip = 0;
             do {
-                $ret = Query::doCloudQuery($cql, array_merge($hashes, [$skip]));
+                $cql = sprintf("select objectId from %s where hash in (%s) limit %d, %d"
+                    , $this->table
+                    , implode(', ', array_fill(0, count($hashes), '?'))
+                    , $skip
+                    , self::PACKNUM
+                );
+
+                $ret = Query::doCloudQuery($cql, $hashes);
                 $exists = array_merge($exists, $ret['results']);
                 $skip += self::PACKNUM;
             }
             while(count($ret['results']) == self::PACKNUM);
-            Object::destroyAll($exists);
+            Object::destroyAll(array_filter($exists));
+            error_log(count($exists) . ' deleted from ' . $this->table);
         }
         catch (CloudException $ex) {
             error_log($cql);
@@ -64,32 +72,41 @@ abstract class Common {
 
     protected function get_exists($hashes) {
         try {
-            $cql = sprintf("select * from %s where hash in (%s) limit ?, %d"
-                , $this->table
-                , implode(', ', array_fill(0, count($hashes), '?'))
-                , self::PACKNUM
-            );
+            if(empty($hashes)) {
+                return [];
+            }
+
 
             $skip = 0;
             $exists = [];
             do {
-                $ret = Query::doCloudQuery($cql, array_merge($hashes, [$skip]));
+                $cql = sprintf("select * from %s where hash in (%s) limit %d, %d"
+                    , $this->table
+                    , implode(', ', array_fill(0, count($hashes), '?'))
+                    , $skip
+                    , self::PACKNUM
+                );
+
+                $ret = Query::doCloudQuery($cql, $hashes);
                 $exists = array_merge($exists, $ret['results']);
                 $skip += self::PACKNUM;
             }
             while(count($ret['results']) == self::PACKNUM);
+
             return $exists;
         }
         catch (CloudException $ex) {
             error_log($cql);
             error_log($ex->getMessage());
+            error_log(json_encode(array_merge($hashes, [$skip])));
         }
         return [];
     }
 
     public function batch_save($data) {
         if(empty($data)) {
-            debug_print_backtrace();die;
+            error_log('empty for save ' . $this->table);
+            return;
         }
         foreach($data as &$datum) {
             $datum['hash'] = static::_gen_hash($datum);
@@ -100,21 +117,30 @@ abstract class Common {
         $data = array_column($data, null, 'hash'); // remove duplicated
         foreach ($exists as $object) {
             $hash = $object->get('hash');
-            $this->update($object, $data[$hash], true);
-            unset($data[$hash]);
+            if(isset($data[$hash])) {
+                $this->update($object, $data[$hash], true);
+                unset($data[$hash]);
+            }
         }
+        error_log(count($exists) . ' updated from ' . $this->table);
 
         // new object
         $objects = array_map(function($obj) {
             return $this->create($obj, true);
         }, $data);
 
-        $objects = array_merge($exists, $objects);
-        Object::saveAll($objects);
+        $allObjs = array_merge($exists, $objects);
+        Object::saveAll(array_filter($allObjs));
+
+        error_log(count($objects) . ' created from ' . $this->table);
     }
 
     public function update($object, $datum, $batch = false) {
         try {
+            if(!is_array($datum) && !is_object($datum)) {
+                return;
+            }
+
             $object = new Object($this->table);
             foreach($datum as $key => $val) {
                 $object->set($key, $val);
@@ -153,39 +179,52 @@ abstract class Common {
     }
 
     protected function allWithDate($begindate, $enddate) {
-
-        $cql = sprintf("select * from %s where date between ? and ? limit ?, %d"
-            , $this->table
-            , self::PACKNUM
-        );
-
         $objects = [];
-        $skip = 0;
-        do {
-            $ret = Query::doCloudQuery($cql, [$begindate, $enddate, $skip]);
-            $objects = array_merge($objects, $ret['results']);
-            $skip += self::PACKNUM;
+
+        try {
+            $skip = 0;
+            do {
+                $cql = sprintf("select * from %s where date between ? and ? limit %d, %d"
+                    , $this->table
+                    , $skip
+                    , self::PACKNUM
+                );
+
+                $ret = Query::doCloudQuery($cql, [$begindate, $enddate]);
+                $objects = array_merge($objects, $ret['results']);
+                $skip += self::PACKNUM;
+            }
+            while(count($ret['results']) == self::PACKNUM);
         }
-        while(count($ret['results']) == self::PACKNUM);
+        catch(CloudException $e) {
+            error_log($e->getMessage());
+        }
 
         return $objects;
     }
 
     protected function singleWithDate($qqno, $begindate, $enddate) {
-
-        $cql = sprintf("select * from %s where qqno = ? and date >= ? and date <= ? limit ?, %d"
-            , $this->table
-            , self::PACKNUM
-        );
-
         $objects = [];
-        $skip = 0;
-        do {
-            $ret = Query::doCloudQuery($cql, [intval($qqno), $begindate, $enddate, $skip]);
-            $objects = array_merge($objects, $ret['results']);
-            $skip += self::PACKNUM;
+
+        try {
+
+            $skip = 0;
+            do {
+                $cql = sprintf("select * from %s where qqno = ? and date >= ? and date <= ? limit %d, %d"
+                    , $this->table
+                    , $skip
+                    , self::PACKNUM
+                );
+
+                $ret = Query::doCloudQuery($cql, [intval($qqno), $begindate, $enddate]);
+                $objects = array_merge($objects, $ret['results']);
+                $skip += self::PACKNUM;
+            }
+            while(count($ret['results']) == self::PACKNUM);
         }
-        while(count($ret['results']) == self::PACKNUM);
+        catch(CloudException $e) {
+            error_log($e->getMessage());
+        }
 
         return $objects;
     }

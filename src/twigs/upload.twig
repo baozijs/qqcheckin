@@ -4,17 +4,18 @@
 
 {% block main_content %} 
     <div class="row">
-        <div class="col-xs-12">
-            <h1>Upload for {{ groups[group] }}</h1>
-            <form role="form" action="/admin/{{ group }}/upload" method="POST" enctype="multipart/form-data">
-                <div class="form-group">
-                  <label for="exampleInputFile">QQ Chat Records:</label>
-                  <input type="file" name="qqchat">
-                  <p class="help-block">Please select the file of qq chat records.</p>
-                </div>
-                <input type="submit" value="Upload" class="btn btn-primary" />
-                &nbsp;<a href="{{ path_for('admin-home') }}" class="btn btn-default">back to dashboard</a>
-            </form>
+        <div class="col-md-12">
+            <div class="lead">
+              <h1>Upload for {{ groups[group] }}</h1>
+              <form role="form" action="/admin/{{ group }}/upload" method="POST" enctype="multipart/form-data">
+                  <div class="form-group">
+                    <label for="exampleInputFile">QQ Chat Records:</label>
+                    <input type="file" name="qqchat">
+                    <p class="help-block">Please select the file of qq chat records.</p>
+                  </div>
+                  <input type="submit" value="Upload" class="btn btn-primary" />
+              </form>
+            </div>
         </div>
     </div>
 {% endblock %}

@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-28 14:22:23
+ * @Last Modified time: 2016-10-30 01:03:56
  */
 namespace ScalersTalk\Checkin;
 
@@ -17,6 +17,7 @@ use \LeanCloud\Engine\SlimEngine;
 use \ScalersTalk\Data\Checkin as DataCheckin;
 use \ScalersTalk\Data\Leave as DataLeave;
 use \ScalersTalk\Data\QQUser as DataQQUser;
+use \ScalersTalk\Data\Config as DataConfig;
 use \ScalersTalk\Util\ChatParser;
 use \ScalersTalk\Setting\Items;
 use \ScalersTalk\Setting\Config;
@@ -29,6 +30,8 @@ class Admin extends CheckinBase {
     }
 
     public function upload(Request $req, Response $resp, $args) {
+        $this->setLastUpdatedForView($args['group']);
+
         $groups = Config::get('groups');
 
         // 获取上传的文件
@@ -41,8 +44,12 @@ class Admin extends CheckinBase {
         }
         $tmpfile = $files['qqchat']->file;
 
+        // dataConfig
+        $dataConfig = new DataConfig($args['group']);
+        $lastUpdated = $dataConfig->get('lastUpdated');
+
         // 解析上传的文件
-        $chatParser = new ChatParser($tmpfile, Items::get($args['group']), 0);
+        $chatParser = new ChatParser($tmpfile, Items::get($args['group']), $lastUpdated);
         $chatParser->parse();
 
         // 保存
@@ -54,12 +61,16 @@ class Admin extends CheckinBase {
         $dataCheckin->batch_save($chatParser->checkins);
         $dataQQuser->batch_save($chatParser->getQqusers());
 
+        $dataConfig->set('lastUpdated', (string)($chatParser->getCurrentUpdate()));
+
         // 跳转到看最近一周的数据
         return $resp->withStatus(302)->withHeader('Location', $this->app->router->pathFor('admin-view', $args));
     }
 
     // 最近一周的数据
     public function viewAll(Request $req, Response $resp, $args) {
+        $this->setLastUpdatedForView($args['group']);
+
         $dataCheckin = new DataCheckin($args['group']);
         $dataLeave = new DataLeave($args['group']);
         $dataQQUser = new DataQQUser($args['group']);
@@ -72,8 +83,8 @@ class Admin extends CheckinBase {
         // 起止时间
         $query = $req->getQueryParams();
         if(empty($query['dateRange'])) {
-            $start = "last sun";
-            $end = "this sat";
+            $start = "sun 1 week ago";
+            $end = "last sat";
         }
         else {
             list($start, $end) = explode(' to ', $query['dateRange']);
@@ -119,6 +130,8 @@ class Admin extends CheckinBase {
     }
 
     public function viewStatistics(Request $req, Response $resp, $args) {
+        $this->setLastUpdatedForView($args['group']);
+
         $dataCheckin = new DataCheckin($args['group']);
         $dataLeave = new DataLeave($args['group']);
         $dataQQUser = new DataQQUser($args['group']);

@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:52:25
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-27 18:28:02
+ * @Last Modified time: 2016-10-30 01:23:58
  */
 
 namespace ScalersTalk\Util;
@@ -13,9 +13,16 @@ class ChatParser {
     const RE_WHO = "/^(?P<when>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+(?P<nick>.*)\((?P<qqno>[1-9][0-9]{4,})\)$/i"; // 2016-07-03 09:04:00  Steve (2276064083)
     const RE_SELF = "/^(?P<when>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+(?P<nick>.*)$/i"; // 2016-07-03 09:04:00  Steve 
     const RE_IGNORES = ['/\*.+@$/i'];
-    const COMPACIBILITY = [
+    static $COMPACIBILITY = [
         '【' => '[',
         '】' => ']',
+        '［' => '[',
+        '］' => ']',
+        '～' => '~',
+        '－' => '-',
+        '　' => ' ',
+        '．' => '.',
+        '＋' => '+',
         ];
     // 
     private $re_checkin_date = "(?P<month>\d{1,2})[\.\-]?(?P<day>\d{1,2})[\s\-]*";
@@ -23,19 +30,19 @@ class ChatParser {
     private $re_checkin_rate = "[\s\-]*(?P<rate>\d{1,2}|100)\%?";
 
     private $content;
-    private $lastUpate;
+    private $lastUpdate;
     private $currentUpdate;
     private $item_key_map;
     private $item_valid_map;
-    public function __construct($path, $items, $lastUpate) {
+    public function __construct($path, $items, $lastUpdate) {
         if(!is_file($path)) {
             die($path . ' is not a valid file.');
         }
         $hfile = fopen($path, 'r');
-        $this->content = strtr(fread($hfile, filesize($path)), self::COMPACIBILITY);
+        $this->content = strtr(fread($hfile, filesize($path)), self::$COMPACIBILITY);
         fclose($hfile);
 
-        $this->lastUpate = empty($lastUpate) ? 0 : $lastUpate - 30;
+        $this->lastUpdate = empty($lastUpdate) ? 0 : $lastUpdate - 30;
 
         $items = array_map(function($i, $k){
             return [$i['name'], $i['valid'], $k];
@@ -280,7 +287,7 @@ class ChatParser {
             if(preg_match(self::RE_WHO, $line, $match)) {
                 $qqno = $match['qqno'];
                 $when = strtotime($match['when']);
-                if($when <= $this->lastUpate) {
+                if($when <= $this->lastUpdate) {
                     continue;
                 }
                 $this->currentUpdate = $when;
@@ -289,13 +296,13 @@ class ChatParser {
             elseif(preg_match(self::RE_SELF, $line, $match)) {
                 $qqno = '999999999';
                 $when = strtotime($match['when']);
-                if($when <= $this->lastUpate) {
+                if($when <= $this->lastUpdate) {
                     continue;
                 }
                 $this->qqno_nicks[$qqno]  = $match['nick'];
             }
             elseif($qqno !== null && $when !== null) {
-                if($when <= $this->lastUpate) {
+                if($when <= $this->lastUpdate) {
                     continue;
                 }
                 if(empty($this->qqno_chats_raw[$qqno][$when])) {

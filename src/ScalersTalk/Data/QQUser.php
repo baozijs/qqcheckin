@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 23:49:20
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-28 12:24:27
+ * @Last Modified time: 2016-10-30 00:26:09
  */
 namespace ScalersTalk\Data;
 
@@ -22,16 +22,20 @@ class QQUser extends Common {
 
     public function all() {
         $ret = [];
-        $skip = 0;
-        do {
-            $query = new Query($this->table);
-            $query->skip($skip);
-            $tmp = $query->find();
-            $ret = array_merge($ret, $tmp);
+        try {
+            $skip = 0;
+            do {
+                $query = new Query($this->table);
+                $query->skip($skip);
+                $tmp = $query->find();
+                $ret = array_merge($ret, $tmp);
 
-            $skip += 100;
+                $skip += static::PACKNUM;
+            }
+            while(count($tmp) == static::PACKNUM);
+        }catch(CloudException $e) {
+            error_log($e->getMessage());
         }
-        while(count($tmp) == 100);
         return $ret;
     }
 

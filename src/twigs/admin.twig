@@ -4,14 +4,12 @@
 
 {% block main_content %} 
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-md-12">
             <h1>Administration</h1>
             {% for key, name in groups %}
               <div>
               <h2>{{ name }}</h2>
-              {% if superadmin %}
               <a class="btn btn-default btn-xs" href="{{ path_for('admin-upload', {group: key}) }}">Upload Chat Records</a>
-              {% endif %}
               <a class="btn btn-default btn-xs"  href="{{ path_for('admin-view', {group: key}) }}">View recent data</a>
               <a class="btn btn-default btn-xs"  href="{{ path_for('admin-statistics', {group: key}) }}">Statistics</a>
               </div>

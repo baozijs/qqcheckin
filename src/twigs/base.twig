@@ -2,21 +2,29 @@
 <html>
   <head>
     <title>{% block page_title %}{% endblock %} - Listen</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet"><link href="//cdn.bootcss.com/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/stylesheets/style.css">
     <link rel="stylesheet" href="/javascript/week-picker-view.css">
+    <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
   </head>
   <body>
-    <div class="container-fluid">
+    <div class="container">
+        <ul class="nav nav-tabs" role="tablist">
+          {% if isadmin %}
+          <li role="presentation"{# class="active" #}><a href="{{ path_for('admin-home') }}">Administration</a></li>
+          {% endif %}
+          {% if group %}
+          <li role="presentation"><a href="{{ path_for('user-view', {group:group}) }}">Entrance</a></li>
+          {% endif %}
+          <li role="presentation"><a href="https://www.zybuluo.com/AminBy/note/542819" target="_blank">Rules for checkin</a></li>
+          {% if lastUpdated %}
+          <li role="presentation" class="disabled"><a href="#">Last Updated: {{ lastUpdated|date("Y-m-d H:i:s") }}</a></li>
+          {% endif%}
+        </ul>
         {% block  main_content %}{% endblock %}
-        <div class="row">
-          <div class="col-xs-12">
-            <a href="https://www.zybuluo.com/AminBy/note/542819">打卡规则</a>
-          </div>
-        </div>
     </div>
-    <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
     <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="//cdn.bootcss.com/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"></script>
     <script src="/javascript/week-picker.js"></script>
