@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 23:49:20
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-30 00:26:09
+ * @Last Modified time: 2016-10-30 01:44:26
  */
 namespace ScalersTalk\Data;
 
@@ -34,7 +34,7 @@ class QQUser extends Common {
             }
             while(count($tmp) == static::PACKNUM);
         }catch(CloudException $e) {
-            error_log($e->getMessage());
+            Log::debug($e->getMessage());
         }
         return $ret;
     }
@@ -47,7 +47,7 @@ class QQUser extends Common {
             return $obj->get('nick');
         }
         catch (CloudException $e) {
-            die($qqno . ' not found.');
+            Log::debug($qqno . ' not found.');
         }
     }
 }

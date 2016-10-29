@@ -23,7 +23,7 @@ use \ScalersTalk\Checkin\Admin as ModAdmin;
 use \ScalersTalk\Checkin\User as ModUser;
 use \ScalersTalk\Setting\Config;
 
-define('DEBUG', false);
+define('DEBUG', true);
 
 session_start();
 $app = new \Slim\App();

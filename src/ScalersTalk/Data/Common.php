@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 15:55:53
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-30 01:03:17
+ * @Last Modified time: 2016-10-30 01:54:33
  */
 
 namespace ScalersTalk\Data;
@@ -27,7 +27,7 @@ abstract class Common {
     public function __construct($group) {
         $parsedClass = explode('\\', get_class($this));
         $name = end($parsedClass);
-        $this->table = ucfirst($group) . ucfirst($name).(constant('DEBUG') ? 'Debug' : '');
+        $this->table = (constant('DEBUG') ? 'Debug' : '') . ucfirst($group) . ucfirst($name);
     }
 
     protected static $_keys = [
@@ -62,11 +62,11 @@ abstract class Common {
             }
             while(count($ret['results']) == self::PACKNUM);
             Object::destroyAll(array_filter($exists));
-            error_log(count($exists) . ' deleted from ' . $this->table);
+            Log::debug(count($exists) . ' deleted from ' . $this->table);
         }
         catch (CloudException $ex) {
-            error_log($cql);
-            error_log($ex->getMessage());
+            Log::debug($cql);
+            Log::debug($ex->getMessage());
         }
     }
 
@@ -96,16 +96,16 @@ abstract class Common {
             return $exists;
         }
         catch (CloudException $ex) {
-            error_log($cql);
-            error_log($ex->getMessage());
-            error_log(json_encode(array_merge($hashes, [$skip])));
+            Log::debug($cql);
+            Log::debug($ex->getMessage());
+            Log::debug(json_encode(array_merge($hashes, [$skip])));
         }
         return [];
     }
 
     public function batch_save($data) {
         if(empty($data)) {
-            error_log('empty for save ' . $this->table);
+            Log::debug('empty for save ' . $this->table);
             return;
         }
         foreach($data as &$datum) {
@@ -122,7 +122,7 @@ abstract class Common {
                 unset($data[$hash]);
             }
         }
-        error_log(count($exists) . ' updated from ' . $this->table);
+        Log::debug(count($exists) . ' updated from ' . $this->table);
 
         // new object
         $objects = array_map(function($obj) {
@@ -132,7 +132,7 @@ abstract class Common {
         $allObjs = array_merge($exists, $objects);
         Object::saveAll(array_filter($allObjs));
 
-        error_log(count($objects) . ' created from ' . $this->table);
+        Log::debug(count($objects) . ' created from ' . $this->table);
     }
 
     public function update($object, $datum, $batch = false) {
@@ -148,7 +148,7 @@ abstract class Common {
             $batch || $object->save();
         }
         catch(CloudException $ex) {
-            error_log($ex->getMessage());
+            Log::debug($ex->getMessage());
         }
         return $object;
 
@@ -173,7 +173,7 @@ abstract class Common {
             $batch || $object->save();
         }
         catch(CloudException $ex) {
-            error_log($ex->getMessage());
+            Log::debug($ex->getMessage());
         }
         return $object;
     }
@@ -197,7 +197,7 @@ abstract class Common {
             while(count($ret['results']) == self::PACKNUM);
         }
         catch(CloudException $e) {
-            error_log($e->getMessage());
+            Log::debug($e->getMessage());
         }
 
         return $objects;
@@ -223,7 +223,7 @@ abstract class Common {
             while(count($ret['results']) == self::PACKNUM);
         }
         catch(CloudException $e) {
-            error_log($e->getMessage());
+            Log::debug($e->getMessage());
         }
 
         return $objects;

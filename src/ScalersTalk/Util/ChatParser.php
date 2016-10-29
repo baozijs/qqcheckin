@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:52:25
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-30 01:23:58
+ * @Last Modified time: 2016-10-30 02:15:31
  */
 
 namespace ScalersTalk\Util;
@@ -12,7 +12,7 @@ class ChatParser {
 
     const RE_WHO = "/^(?P<when>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+(?P<nick>.*)\((?P<qqno>[1-9][0-9]{4,})\)$/i"; // 2016-07-03 09:04:00  Steve (2276064083)
     const RE_SELF = "/^(?P<when>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+(?P<nick>.*)$/i"; // 2016-07-03 09:04:00  Steve 
-    const RE_IGNORES = ['/\*.+@$/i'];
+    static $RE_IGNORES = ['/\*.+@$/i'];
     static $COMPACIBILITY = [
         '【' => '[',
         '】' => ']',
@@ -86,7 +86,7 @@ class ChatParser {
         if(empty($line)) {
             return true;
         }
-        foreach(self::RE_IGNORES as $re_ignore) {
+        foreach(self::$RE_IGNORES as $re_ignore) {
             if(preg_match($re_ignore, $line)) {
                 return true;
             }

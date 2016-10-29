@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-30 01:03:56
+ * @Last Modified time: 2016-10-30 01:50:23
  */
 namespace ScalersTalk\Checkin;
 
@@ -46,7 +46,7 @@ class Admin extends CheckinBase {
 
         // dataConfig
         $dataConfig = new DataConfig($args['group']);
-        $lastUpdated = $dataConfig->get('lastUpdated');
+        $lastUpdated = $dataConfig->get('lastUpdated', 0);
 
         // 解析上传的文件
         $chatParser = new ChatParser($tmpfile, Items::get($args['group']), $lastUpdated);

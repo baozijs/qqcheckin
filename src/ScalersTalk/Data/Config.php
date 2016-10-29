@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 17:13:12
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-30 00:20:29
+ * @Last Modified time: 2016-10-30 01:44:46
  */
 namespace ScalersTalk\Data;
 
@@ -12,7 +12,7 @@ use \LeanCloud\Object;
 use \LeanCloud\CloudException;
 
 class Config extends Common {
-    function get($key) {
+    function get($key, $default) {
         try {
             $query = new Query($this->table);
             $query->equalTo("key", $key);
@@ -20,8 +20,9 @@ class Config extends Common {
             return $obj->get('value');
         }
         catch (CloudException $e) {
-            error_log(" config {$key} get fail");
+            Log::debug(" config {$key} get fail");
         }
+        return $default;
     }
 
     function set($key, $value) {
@@ -31,7 +32,7 @@ class Config extends Common {
             $obj = $query->first();
         }
         catch (CloudException $e) {
-            error_log(" config {$key} get for update fail");
+            Log::debug(" config {$key} get for update fail");
         }
 
         try {
@@ -43,7 +44,7 @@ class Config extends Common {
             $obj->save();
         }
         catch (CloudException $e) {
-            error_log(" config {$key} {$value} save fail");
+            Log::debug(" config {$key} {$value} save fail");
         }
     }
 }
