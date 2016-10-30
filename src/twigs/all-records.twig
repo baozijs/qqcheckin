@@ -25,7 +25,7 @@
                 <tr>
                     <th width="20%" class="text-right">成员/日期</th>
                     {% for d in _range %}
-                    <th>{{ d|date('D') }} <span class="hidden-xs hidden-sm">{{ date|date(' (m-d)') }}</span></th>
+                    <th>{{ d|date('D') }} <span class="hidden-xs hidden-sm">{{ d|date(' (m-d)') }}</span></th>
                     {% endfor %}
                 </tr>
 
