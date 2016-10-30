@@ -315,10 +315,55 @@
     /* WEEK PICKER DEFINITION
      * ============================ */
     $(document).ready(function () {
+        var Tool = {
+            incrementDay: function(d, i) {
+                return new Date(d.getFullYear(), d.getMonth(), d.getDate() + i, 12, 00);
+            },
+
+            format:function (date) {
+                // Format a Date into a string as specified by RFC 3339.
+                var month = (date.getMonth() + 1).toString(),
+                    dom = date.getDate().toString();
+                if (month.length === 1) {
+                    month = '0' + month;
+                }
+
+                if (dom.length === 1) {
+                    dom = '0' + dom;
+                }
+
+                // return month + "/" + dom + '/' + date.getFullYear().toString().substr(2, 2);
+                return date.getFullYear().toString().substr(2, 2) + '-' + month + '-' + dom;
+            },
+
+            formatWeek:function (from, to) {
+                return this.format(from) + ' to ' + this.format(to);
+            },
+
+            parseDate: function(str) {
+                var a = str.split('-');
+                return new Date(parseInt(a[0]) + 2000, parseInt(a[1]) - 1, parseInt(a[2]));
+            }
+        };
+
         $.fn.weekpicker = function (options) {
             return this.each(function () {
                 new WeekPicker(this, options);
             });
+        };
+
+        $.fn.weekpicker_nav = function(nday) {
+            var arr = $(this).val().split(/\ to\ /);
+            for(var i in arr) {
+                arr[i] = Tool.incrementDay(Tool.parseDate(arr[i]), nday);
+            }
+            $(this).val(Tool.formatWeek(arr[0], arr[1]));
+        }
+        $.fn.weekpicker_prev = function() {
+            $(this).weekpicker_nav(-7);
+        };
+        $.fn.weekpicker_next = function() {
+            $(this).weekpicker_nav(7);
         };
 
         $(function () {

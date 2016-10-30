@@ -36,8 +36,14 @@
 {% endmacro %}
 
 {% macro weekpicker(cid, start, end) %}
-<div class="input-group" >
-  <div class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></div>
+
+<div class="input-group col-md-3 col-xs-12 col-sm-9">
+  <div class="input-group-addon">
+      <a href="javascript:$('#{{ cid }}').weekpicker_prev();">prev.</a>
+  </div>
   <input data-weekpicker="weekpicker" data-months="1" value="{{ start|date("y-m-d") }} to {{ end|date("y-m-d") }}" class="form-control" name="dateRange" id="{{ cid }}" readonly style="background-color: white"/>
+  <div class="input-group-addon">
+      <a href="javascript:$('#{{ cid }}').weekpicker_next();">next.</a>
+  </div>
 </div>
 {% endmacro %}
