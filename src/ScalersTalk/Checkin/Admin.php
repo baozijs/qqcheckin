@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-30 01:50:23
+ * @Last Modified time: 2016-10-31 23:15:23
  */
 namespace ScalersTalk\Checkin;
 
@@ -23,6 +23,9 @@ use \ScalersTalk\Setting\Items;
 use \ScalersTalk\Setting\Config;
 
 class Admin extends CheckinBase {
+
+    const DEFAULT_END = DEFAULT_END;
+    const DEFAULT_START = DEFAULT_START;
 
     public function showUpload(Request $req, Response $resp, $args) {
         $this->app->view['groups'] = Config::get('groups');
@@ -83,8 +86,8 @@ class Admin extends CheckinBase {
         // 起止时间
         $query = $req->getQueryParams();
         if(empty($query['dateRange'])) {
-            $start = "sun 1 week ago";
-            $end = "last sat";
+            $start = self::DEFAULT_START;
+            $end = self::DEFAULT_END;
         }
         else {
             list($start, $end) = explode(' to ', $query['dateRange']);

@@ -25,6 +25,9 @@ use \ScalersTalk\Setting\Config;
 
 define('DEBUG', true);
 
+define('DEFAULT_END', "sun 1 week ago");
+define('DEFAULT_START', "last sat");
+
 session_start();
 $app = new \Slim\App();
 // 禁用 Slim 默认的 handler，使得错误栈被日志捕捉

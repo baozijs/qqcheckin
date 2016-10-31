@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:30
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-30 00:39:25
+ * @Last Modified time: 2016-10-31 21:16:37
  */
 namespace ScalersTalk\Checkin;
 
@@ -40,7 +40,7 @@ class Auth extends CheckinBase {
 
     public function setIfAdminForView() {
         // print_r($_SESSION); die;
-        if(isset($_SESSION[self::KEY]['type']) && $_SESSION[self::KEY]['type'] != 'admin') {
+        if(isset($_SESSION[self::KEY]['type']) && $_SESSION[self::KEY]['type'] == 'admin') {
             $this->app->view['isadmin'] = true;
         }
     }

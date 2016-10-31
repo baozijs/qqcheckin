@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:53:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-30 00:49:37
+ * @Last Modified time: 2016-10-31 21:24:29
  */
 namespace ScalersTalk\Checkin;
 
@@ -21,16 +21,16 @@ use \ScalersTalk\Setting\Items;
 use \ScalersTalk\Setting\Config;
 
 class User extends CheckinBase {
-    const DEFAULT_START = "last sun";
-    const DEFAULT_END = "last sat";
+    const DEFAULT_END = DEFAULT_END;
+    const DEFAULT_START = DEFAULT_START;
 
     // function 
     function viewByQqno(Request $req, Response $resp, $args) {
         $this->setLastUpdatedForView($args['group']);
 
         if(empty($args['qqno'])) {
-            $args['start'] = strtotime(self::DEFAULT_START);
             $args['end'] = strtotime(self::DEFAULT_END);
+            $args['start'] = strtotime(self::DEFAULT_START);
             return $this->app->view->render($resp, "user-index.twig", $args);
         }
 
