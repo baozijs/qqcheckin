@@ -3,11 +3,12 @@
   <head>
     <title>{% block page_title %}{% endblock %} - Listen</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
     <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet"><link href="//cdn.bootcss.com/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/plugins/boot-weekpicker.css">
     <link rel="stylesheet" href="/stylesheets/style.css">
-    <link rel="stylesheet" href="/javascript/week-picker-view.css">
-    <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
   </head>
   <body>
     <div class="container">
@@ -26,8 +27,9 @@
         {% block  main_content %}{% endblock %}
     </div>
     <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="//cdn.bootcss.com/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"></script>
-    <script src="/javascript/week-picker.js"></script>
+    <script src="//cdn.bootcss.com/moment.js/2.10.6/moment.min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="/plugins/boot-weekpicker.js"></script>
     <script>
     $('[data-toggle="tooltip"]').tooltip();
     </script>

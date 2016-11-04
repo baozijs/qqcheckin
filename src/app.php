@@ -25,8 +25,8 @@ use \ScalersTalk\Setting\Config;
 
 define('DEBUG', true);
 
-define('DEFAULT_END', "sun 1 week ago");
-define('DEFAULT_START', "last sat");
+define('DEFAULT_START', "sun 1 week ago");
+define('DEFAULT_END', "last sat");
 
 session_start();
 $app = new \Slim\App();
