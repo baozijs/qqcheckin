@@ -21,7 +21,6 @@ use \LeanCloud\Object;
 use \ScalersTalk\Checkin\Auth as ModAuth;
 use \ScalersTalk\Checkin\Admin as ModAdmin;
 use \ScalersTalk\Checkin\User as ModUser;
-use \ScalersTalk\Setting\Config;
 
 define('DEBUG', true);
 
@@ -30,6 +29,10 @@ define('DEFAULT_END', "last sat");
 
 session_start();
 $app = new \Slim\App();
+ModAuth::init($app);
+ModAdmin::init($app);
+ModUser::init($app);
+
 // 禁用 Slim 默认的 handler，使得错误栈被日志捕捉
 unset($app->getContainer()['errorHandler']);
 
@@ -62,7 +65,7 @@ $container['view'] = function ($c) {
 };
 
 $app->add(function ($request, $response, $next) {
-    (new ModAuth($this))->setIfAdminForView();
+    ModAuth::inst()->setIfAdminForView();
     $response = $next($request, $response);
     // $response->getBody()->write('AFTER');
     return $response;
@@ -70,58 +73,62 @@ $app->add(function ($request, $response, $next) {
 
 
 $app->get('/', function (Request $req, Response $resp) {
-    return $this->view->render($resp, "index.twig", ['groups' => Config::get('groups')]);
+    return $this->view->render($resp, "index.twig", ['groups' => ModAuth::inst()->getGroups()]);
 })->setName('home');
 
 $app->get('/admin[/superadmin/{superadmin}]', function (Request $req, Response $resp, $args) {
-    if($res = (new ModAuth($this))->needAdmin($req, $resp, $args)) {
+    if($res = ModAuth::inst()->needAdmin($req, $resp, $args)) {
         return $res;
     }
-    return (new ModAdmin($this))->showAdmin($req, $resp, $args);
+    return ModAdmin::inst()->showAdmin($req, $resp, $args);
 })->setName('admin-home');
 
 $app->post('/login', function (Request $req, Response $resp, $args) {
-    return (new ModAuth($this))->login($req, $resp, $args);
+    return ModAuth::inst()->login($req, $resp, $args);
 });
 
 $app->get('/login', function (Request $req, Response $resp, $args) {
     return $this->view->render($resp, "login.twig", $args);
 })->setName('auth-login');
 
+$app->get('/logout', function (Request $req, Response $resp, $args) {
+    return ModAuth::inst()->logout($req, $resp);
+})->setName('auth-logout');
+
 $app->get('/admin/{group}/view', function(Request $req, Response $resp, $args) {
-    if($res = (new ModAuth($this))->needAdmin($req, $resp, $args)) {
+    if($res = ModAuth::inst()->needAdmin($req, $resp, $args)) {
         return $res;
     }
-    return (new ModAdmin($this))->viewAll($req, $resp, $args);
+    return ModAdmin::inst()->viewAll($req, $resp, $args);
 })->setName('admin-view');
 
 $app->get('/admin/{group}/statistics', function(Request $req, Response $resp, $args){
 
-    if($res = (new ModAuth($this))->needAdmin($req, $resp, $args)) {
+    if($res = ModAuth::inst()->needAdmin($req, $resp, $args)) {
         return $res;
     }
-    return (new ModAdmin($this))->viewStatistics($req, $resp, $args);
+    return ModAdmin::inst()->viewStatistics($req, $resp, $args);
 })->setName('admin-statistics');;
 
 $app->post('/admin/{group}/upload', function(Request $req, Response $resp, $args) {
 
-    if($res = (new ModAuth($this))->needAdmin($req, $resp, $args)) {
+    if($res = ModAuth::inst()->needAdmin($req, $resp, $args)) {
         return $res;
     }
-    return (new ModAdmin($this))->upload($req, $resp, $args);
+    return ModAdmin::inst()->upload($req, $resp, $args);
 });
 
 
 $app->get('/admin/{group}/upload', function(Request $req, Response $resp, $args) {
-    if($res = (new ModAuth($this))->needAdmin($req, $resp, $args)) {
+    if($res = ModAuth::inst()->needAdmin($req, $resp, $args)) {
         return $res;
     }
-    return (new ModAdmin($this))->showUpload($req, $resp, $args);
+    return ModAdmin::inst()->showUpload($req, $resp, $args);
 })->setName('admin-upload');
 
 
 $app->get('/user/{group}[/{qqno}]', function(Request $req, Response $resp, $args) {
-    return (new ModUser($this))->viewByQqno($req, $resp, $args);
+    return ModUser::inst()->viewByQqno($req, $resp, $args);
 })->setName('user-view');
 
 $app->run();

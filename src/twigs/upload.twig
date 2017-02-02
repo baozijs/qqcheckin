@@ -6,12 +6,12 @@
     <div class="row">
         <div class="col-md-12">
             <div class="lead">
-              <h3>Upload for {{ groups[group] }}</h3>
+              <h3>{{ groups[group] }} <font color="gray">更新打卡记录</font></h3>
               <form role="form" action="/admin/{{ group }}/upload" method="POST" enctype="multipart/form-data">
                   <div class="form-group">
-                    <label for="exampleInputFile">QQ Chat Records:</label>
+                    <label for="exampleInputFile">QQ聊天记录:</label>
                     <input type="file" name="qqchat">
-                    <p class="help-block">Please select the file of qq chat records.</p>
+                    <p class="help-block">请选择用安卓手机导出的txt聊天记录.</p>
                   </div>
                   <input type="submit" value="Upload" class="btn btn-primary" />
               </form>

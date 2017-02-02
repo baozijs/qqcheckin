@@ -5,13 +5,14 @@
 {% block main_content %} 
     <div class="row">
         <div class="col-md-12">
-            <h3>Administration</h3>
+            <h3>Dashboard</h3>
             {% for key, name in groups %}
               <div>
-              <h2>{{ name }}</h2>
-              <a class="btn btn-default btn-xs" href="{{ path_for('admin-upload', {group: key}) }}">Upload Chat Records</a>
-              <a class="btn btn-default btn-xs"  href="{{ path_for('admin-view', {group: key}) }}">View recent data</a>
-              <a class="btn btn-default btn-xs"  href="{{ path_for('admin-statistics', {group: key}) }}">Statistics</a>
+              <h4>{{ name }}</h4>
+              <a class="btn btn-primary" href="{{ path_for('admin-upload', {group: key}) }}">更新打卡</a>
+              <a class="btn btn-success"  href="{{ path_for('admin-view', {group: key}) }}">每周数据</a>
+              <a class="btn btn-info"  href="{{ path_for('admin-statistics', {group: key}) }}">最近5周统计</a>
+              <a class="btn btn-default"  href="{{ path_for('user-view', {group: key}) }}">成员入口</a>
               </div>
             {% endfor %}
         </div>

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <title>{% block page_title %}{% endblock %} - Listen</title>
+    <title>{% block page_title %}{% endblock %} - ScalersTalk Dictation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
     <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -14,14 +14,15 @@
     <div class="container">
         <ul class="nav nav-tabs" role="tablist">
           {% if isadmin %}
-          <li role="presentation"{# class="active" #}><a href="{{ path_for('admin-home') }}">Administration</a></li>
+          <li role="presentation"{# class="active" #}><a href="{{ path_for('admin-home') }}">管理页面</a></li>
+          <li role="presentation"><a href="{{ path_for('auth-logout') }}">退出登录</a></li>
           {% endif %}
           {% if group %}
-          <li role="presentation"><a href="{{ path_for('user-view', {group:group}) }}">Entrance</a></li>
+          <li role="presentation"><a href="{{ path_for('user-view', {group:group}) }}">成员入口</a></li>
           {% endif %}
-          <li role="presentation"><a href="https://www.zybuluo.com/AminBy/note/542819" target="_blank">Rules for checkin</a></li>
+          <li role="presentation"><a href="https://www.zybuluo.com/AminBy/note/542819" target="_blank">打卡规则</a></li>
           {% if lastUpdated %}
-          <li role="presentation" class="disabled"><a href="#">Last Updated: {{ lastUpdated|date("Y-m-d H:i:s") }}</a></li>
+          <li role="presentation" class="disabled"><a href="#">最后更新时间: {{ lastUpdated|date("Y-m-d H:i:s") }}</a></li>
           {% endif%}
         </ul>
         {% block  main_content %}{% endblock %}

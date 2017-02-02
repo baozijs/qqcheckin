@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 15:55:53
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-30 01:54:33
+ * @Last Modified time: 2017-02-03 01:07:36
  */
 
 namespace ScalersTalk\Data;
@@ -27,7 +27,7 @@ abstract class Common {
     public function __construct($group) {
         $parsedClass = explode('\\', get_class($this));
         $name = end($parsedClass);
-        $this->table = (constant('DEBUG') ? 'Debug' : '') . ucfirst($group) . ucfirst($name);
+        $this->table = 'Debug' . ucfirst($group) . ucfirst($name);
     }
 
     protected static $_keys = [

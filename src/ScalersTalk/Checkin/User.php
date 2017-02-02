@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:53:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-31 21:24:29
+ * @Last Modified time: 2017-02-03 00:07:48
  */
 namespace ScalersTalk\Checkin;
 
@@ -28,10 +28,11 @@ class User extends CheckinBase {
     function viewByQqno(Request $req, Response $resp, $args) {
         $this->setLastUpdatedForView($args['group']);
 
+        $view = $this->app->getContainer()['view'];
         if(empty($args['qqno'])) {
             $args['end'] = strtotime(self::DEFAULT_END);
             $args['start'] = strtotime(self::DEFAULT_START);
-            return $this->app->view->render($resp, "user-index.twig", $args);
+            return $view->render($resp, "user-index.twig", $args);
         }
 
         $dataCheckin = new DataCheckin($args['group']);
@@ -70,6 +71,6 @@ class User extends CheckinBase {
         $args['_leaves'] = $_leaves;
         $args['_nick'] = $_nick;
 
-        return $this->app->view->render($resp, "user-records.twig", $args);
+        return $view->render($resp, "user-records.twig", $args);
     }
 }

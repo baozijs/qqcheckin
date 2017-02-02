@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-02-02 16:58:31
+ * @Last Modified time: 2017-02-03 01:01:07
  */
 namespace ScalersTalk\Checkin;
 
@@ -22,20 +22,23 @@ use \ScalersTalk\Util\ChatParser;
 use \ScalersTalk\Setting\Items;
 use \ScalersTalk\Setting\Config;
 
+use \ScalersTalk\Checkin\Auth as ModAuth;
+
 class Admin extends CheckinBase {
 
     const DEFAULT_END = DEFAULT_END;
     const DEFAULT_START = DEFAULT_START;
 
     public function showUpload(Request $req, Response $resp, $args) {
-        $this->app->view['groups'] = Config::get('groups');
-        return $this->app->view->render($resp, "upload.twig", $args);
+        $view = $this->app->getContainer()['view'];
+        $view['groups'] = ModAuth::inst()->getGroups();
+        return $view->render($resp, "upload.twig", $args);
     }
 
     public function upload(Request $req, Response $resp, $args) {
         $this->setLastUpdatedForView($args['group']);
 
-        $groups = Config::get('groups');
+        $groups = ModAuth::inst()->getGroups();
 
         // 获取上传的文件
         $files = $req->getUploadedFiles();
@@ -67,7 +70,8 @@ class Admin extends CheckinBase {
         $dataConfig->set('lastUpdated', (string)($chatParser->getCurrentUpdate()));
 
         // 跳转到看最近一周的数据
-        return $resp->withStatus(302)->withHeader('Location', $this->app->router->pathFor('admin-view', $args));
+        $router = $this->app->getContainer()['router'];
+        return $resp->withStatus(302)->withHeader('Location', $router->pathFor('admin-view', $args));
     }
 
     // 最近一周的数据
@@ -129,7 +133,8 @@ class Admin extends CheckinBase {
         $args['_leaves'] = $_leaves;
         $args['_qqusers'] = $_qqusers;
 
-        return $this->app->view->render($resp, "all-records.twig", $args);
+        $view = $this->app->getContainer()['view'];
+        return $view->render($resp, "all-records.twig", $args);
     }
 
     public function viewStatistics(Request $req, Response $resp, $args) {
@@ -194,11 +199,13 @@ class Admin extends CheckinBase {
         $args['_start'] = $start;
         $args['_end'] = $end;
 
-        return $this->app->view->render($resp, "statistics.twig", $args);
+        $view = $this->app->getContainer()['view'];
+        return $view->render($resp, "statistics.twig", $args);
     }
 
     public function showAdmin(Request $req, Response $resp, $args) {
-        $args['groups'] = Config::get('groups');
-        return $this->app->view->render($resp, "admin.twig", $args);
+        $args['groups'] = ModAuth::inst()->getGroups();
+        $view = $this->app->getContainer()['view'];
+        return $view->render($resp, "admin.twig", $args);
     }
 }
