@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-31 23:15:23
+ * @Last Modified time: 2017-02-02 16:58:31
  */
 namespace ScalersTalk\Checkin;
 
@@ -168,7 +168,11 @@ class Admin extends CheckinBase {
                 $_statistics1[$obj->get('qqno')][$obj->get('itemkey')] += 1;
             }
             if($obj->get('itemkey') != 'leave') {
-                $_statistics2[$obj->get('qqno')][strtotime('last sun', $obj->get('date'))] += 1;
+                $weekslot = strtotime('last sun', $obj->get('date'));
+                if ($obj->get('date') - $weekslot >= 604800) {
+                    $weekslot += 604800;
+                }
+                $_statistics2[$obj->get('qqno')][$weekslot] += 1;
             }
         }, array_merge($_leaves, $_checkins));
 
