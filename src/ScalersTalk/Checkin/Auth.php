@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:30
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-02-03 16:55:56
+ * @Last Modified time: 2017-02-03 17:52:53
  */
 namespace ScalersTalk\Checkin;
 
@@ -65,10 +65,13 @@ class Auth extends CheckinBase {
     }
 
     public function getGroups() {
-        if (!isset($_SESSION[self::KEY]['groups'])) {
-            $this->logout();
+        if (isset($_SESSION[self::KEY]) && !isset($_SESSION[self::KEY]['groups'])) {
+            $req = $this->app->getContainer()->get('request');
+            $resp = $this->app->getContainer()->get('response');
+            $this->logout($req, $resp);
         }
-        return $_SESSION[self::KEY]['groups'];
+
+        return isset($_SESSION[self::KEY]) ? $_SESSION[self::KEY]['groups'] : [];
     }
 
     public function setIfAdminForView() {
