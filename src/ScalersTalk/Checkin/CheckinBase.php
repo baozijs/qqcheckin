@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 17:21:02
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-02-02 23:40:57
+ * @Last Modified time: 2017-03-12 23:44:20
  */
 namespace ScalersTalk\Checkin;
 use \ScalersTalk\Data\Config as DataConfig;
@@ -18,6 +18,7 @@ abstract class CheckinBase {
         $dataConfig = new DataConfig($group);
         $view = $this->app->getContainer()['view'];
         $view['lastUpdated'] = $dataConfig->get('lastUpdated', 0);
+        $view['urlRule'] = $dataConfig->get('urlRule', 'https://www.zybuluo.com/AminBy/note/542819');
     }
 
     private static $objs = [];

@@ -8,7 +8,7 @@
     <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
     <link href="//cdn.bootcss.com/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/plugins/boot-weekpicker.css">
-    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/style.css?v=20170313">
   </head>
   <body>
     <div class="container">
@@ -20,7 +20,9 @@
           {% if group %}
           <li role="presentation"><a href="{{ path_for('user-view', {group:group}) }}">成员入口</a></li>
           {% endif %}
-          <li role="presentation"><a href="https://www.zybuluo.com/AminBy/note/542819" target="_blank">打卡规则</a></li>
+          {% if urlRule %}
+          <li role="presentation"><a href="{{ urlRule }}" target="_blank">打卡规则</a></li>
+          {% endif %}
           {% if lastUpdated %}
           <li role="presentation" class="disabled"><a href="#">最后更新时间: {{ lastUpdated|date("Y-m-d H:i:s") }}</a></li>
           {% endif%}

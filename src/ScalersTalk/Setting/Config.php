@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-24 01:18:54
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-02-03 16:42:50
+ * @Last Modified time: 2017-03-13 01:09:55
  */
 namespace ScalersTalk\Setting;
 
@@ -17,6 +17,7 @@ class Config {
             'train001' => '训练营001',
             'train002' => '训练营002',
             'train003' => '训练营003',
+            'nce3' => '新概念3',
             'test' => '用于测试',
         ],
         'users' => [
@@ -50,6 +51,12 @@ class Config {
                 'pass' => 'watermelon',
                 'groups' => [
                     'train003',
+                ],
+            ],
+            'nce3' => [
+                'pass' => 'durian',
+                'groups' => [
+                    'nce3',
                 ],
             ],
             'manager' => [

@@ -2,7 +2,7 @@
 * @Author: AminBy
 * @Date:   2016-10-26 18:50:50
 * @Last Modified by:   AminBy
-* @Last Modified time: 2017-02-03 01:26:46
+* @Last Modified time: 2017-03-13 01:00:01
 */
 .do {
     background-image: url(./Group@1x.png);
@@ -11,10 +11,9 @@
     display: inline-block;
     background-position: -9px -17px;
     border: green 1px solid;
-    background-size: 200px 147.863247863px;
+    background-size: 290px 145px;
     border-radius: 2px;
     margin: 1px;
-    /* background-size: 234px 173px; */
 }
 
 .do-dictate {}
@@ -43,19 +42,34 @@
     background-position-x: -120px;
 }
 .do-fill {
-    background-position-y: -49px;
+    background-position-y: -48px;
     border-color: #4A90E2;
 }
 .do-invalid {
-    background-position-y: -80px;
+    background-position-y: -79px;
     border-color: #9B9B9B;
 }
 .do-error {
-    background-position-y: -113px;
+    background-position-y: -110px;
     border-color: #D0021B;
 }
 .do-null {
     background-position-x: -138px;
-    background-position-y: -113px;
+    background-position-y: -110px;
     border-color: #D0021B;
+}
+.do-retell {
+    background-position-x: -193px;
+}
+.do-comment {
+    background-position-x: -212px;
+}
+.do-review-weekly {
+    background-position-x: -230px;
+}
+.do-review-group {
+    background-position-x: -249px;
+}
+.do-review-monthly {
+    background-position-x: -268px;
 }
