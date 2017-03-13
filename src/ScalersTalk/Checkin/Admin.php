@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-02-03 01:01:07
+ * @Last Modified time: 2017-03-14 01:03:31
  */
 namespace ScalersTalk\Checkin;
 
@@ -207,5 +207,52 @@ class Admin extends CheckinBase {
         $args['groups'] = ModAuth::inst()->getGroups();
         $view = $this->app->getContainer()['view'];
         return $view->render($resp, "admin.twig", $args);
+    }
+
+    public function viewUsers(Request $req, Response $resp, $args) {
+        $dataQQUser = new DataQQUser($args['group']);
+        $qqusers = array_column(DataQQUser::asArray($dataQQUser->all()), null, 'qqno');
+        $qqnos = array_keys($qqusers);
+
+        $dataCheckin = new DataCheckin($args['group']);
+        $qqno_when = $dataCheckin->getLastCheckin($qqnos);
+
+        $now = time();
+        foreach($qqusers as $qqno => &$user) {
+            $user['lastCheckin'] = $qqno_when[$qqno];
+            $user['lastCheckinShow'] = self::parseTime($qqno_when[$qqno], $now);
+        }
+        usort($qqusers, function($a, $b) {
+            return $a['lastCheckin'] < $b['lastCheckin'];
+        });
+
+        $args["qqusers"] = $qqusers;
+        $view = $this->app->getContainer()['view'];
+        return $view->render($resp, "members.twig", $args);
+    }
+
+    public static function parseTime($time, $now = null) {
+        if($time < 10) {
+            return "从未打卡";
+        }
+
+        $now || $now = time();
+        $elapse = $now - $time;
+        if ($elapse < 60) {
+            return "$elapse 秒前";
+        }
+        $elapse = intval($elapse / 60);
+        if ($elapse < 60) {
+            return "$elapse 分钟前";
+        }
+        $elapse = intval($elapse / 60);
+        if ($elapse < 24) {
+            return "$elapse 小时前";
+        }
+        $elapse = intval($elapse / 24);
+        if ($elapse < 365) {
+            return "$elapse 天前";
+        }
+        return "N久以前";
     }
 }

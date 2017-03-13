@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 23:49:20
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-30 01:44:26
+ * @Last Modified time: 2017-03-14 01:05:46
  */
 namespace ScalersTalk\Data;
 
@@ -49,5 +49,9 @@ class QQUser extends Common {
         catch (CloudException $e) {
             Log::debug($qqno . ' not found.');
         }
+    }
+
+    public function remove($qqno) {
+        
     }
 }

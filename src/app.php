@@ -126,6 +126,13 @@ $app->get('/admin/{group}/upload', function(Request $req, Response $resp, $args)
     return ModAdmin::inst()->showUpload($req, $resp, $args);
 })->setName('admin-upload');
 
+$app->get('/admin/{group}/member', function(Request $req, Response $resp, $args){
+    if($res = ModAuth::inst()->needAdmin($req, $resp, $args)) {
+        return $res;
+    }
+    return ModAdmin::inst()->viewUsers($req, $resp, $args);
+})->setName('user-manage');
+
 
 $app->get('/user/{group}[/{qqno}]', function(Request $req, Response $resp, $args) {
     return ModUser::inst()->viewByQqno($req, $resp, $args);

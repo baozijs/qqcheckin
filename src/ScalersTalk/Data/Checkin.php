@@ -3,9 +3,13 @@
  * @Author: AminBy
  * @Date:   2016-10-23 12:09:39
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-28 01:18:11
+ * @Last Modified time: 2017-03-14 01:06:12
  */
 namespace ScalersTalk\Data;
+
+use \LeanCloud\Query;
+use \LeanCloud\Object;
+use \LeanCloud\CloudException;
  
 // [item] => 听写
 // [rate] => 89
@@ -22,5 +26,28 @@ class Checkin extends Common {
     }
     public function singleWithDate($qqno, $begindate, $enddate) {
         return parent::singleWithDate($qqno, $begindate, $enddate);
+    }
+    public function getLastCheckin($qqnos) {
+
+        $objects = [];
+
+        foreach($qqnos as $qqno) {
+            try {
+                $query = new Query($this->table);
+                $query->equalTo("qqno", $qqno)->descend('when');
+                $obj = $query->first();
+                $objects[$qqno] = $obj->get('when');
+            }
+            catch (CloudException $e) {
+                Log::debug($e->getMessage());
+                $objects[$qqno] = 0;
+            }
+        }
+
+        return $objects;
+    }
+
+    public function removeQQNo($qqno) {
+        
     }
 }

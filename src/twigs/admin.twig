@@ -12,6 +12,7 @@
               <a class="btn btn-primary" href="{{ path_for('admin-upload', {group: key}) }}">更新打卡</a>
               <a class="btn btn-success"  href="{{ path_for('admin-view', {group: key}) }}">每周数据</a>
               <a class="btn btn-info"  href="{{ path_for('admin-statistics', {group: key}) }}">最近5周统计</a>
+              <a class="btn btn-warning"  href="{{ path_for('user-manage', {group: key}) }}">成员管理</a>
               <a class="btn btn-default"  href="{{ path_for('user-view', {group: key}) }}">成员入口</a>
               </div>
             {% endfor %}
