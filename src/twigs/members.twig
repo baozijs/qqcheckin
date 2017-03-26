@@ -1,12 +1,12 @@
 {% extends 'base.twig' %}
 
-{% block page_title %}会员管理{% endblock %}
+{% block page_title %}成员管理{% endblock %}
 
 {% block main_content %} 
     <div class="row">
         <div class="col-md-12">
             <div class="lead">
-                <h3>{{ '<<会员管理>>' }}</h3>
+                <h3>{{ '<<成员管理>>' }}</h3>
             </div>
         </div>
         <div class="col-md-12">
@@ -22,11 +22,49 @@
                     <td>{{ member['qqno'] }}</td>
                     <td>{{ member['nick'] }}</td>
                     <td>{{ member['lastCheckinShow'] }}</td>
-                    <td><a href="#" class="btn btn-danger btn-sm">踢掉</a></td>
+                    <td><a href="#" class="btn btn-danger btn-sm btn-kick" data-qqno="{{ member['qqno'] }}" data-nick="{{ member['nick'] }}">踢掉</a></td>
                 </tr>
                 {% endfor %}
             </table>
         </div>
 
     </div>
+{% endblock %}
+
+{% block page_script %}
+    function removeLine(el) {
+        var $el = $(el);
+        for (var i = 0; i < $el.length; i++) {
+            $($el[i]).parents('tr').remove();
+        }
+    }
+    $(function() {
+        var ajaxKickUrl = '{{ ajaxKickUrl }}';
+        $(".btn-kick").click(function() {
+            var qqno = $(this).attr('data-qqno');
+            var nick = $(this).attr('data-nick');
+            if (!confirm("Are you sure to kick user " + nick + '(' + qqno + ')')) {
+                return false;
+            }
+            var self = this;
+            $.ajax({
+                url: ajaxKickUrl.replace('#qqno', qqno),
+                method: 'DELETE',
+                dataType: 'json',
+                success: function(data) {
+                    if(!data.ok) {
+                        alert("fail: " + data.msg);
+                    }
+                    else {
+                        removeLine(this);
+                        alert(data.msg);
+                    }
+                },
+                error: function() {
+                    alert('network or server error!');
+                }
+            });
+            removeLine(this);
+        });
+    });
 {% endblock %}

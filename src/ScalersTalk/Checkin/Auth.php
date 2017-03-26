@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:30
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-02-03 17:52:53
+ * @Last Modified time: 2017-03-15 08:13:33
  */
 namespace ScalersTalk\Checkin;
 
@@ -28,6 +28,16 @@ class Auth extends CheckinBase {
         }
         if (!empty($args['group']) && !array_key_exists($args['group'], $this->getGroups())) {
             die('Not enough power to do this!');
+        }
+    }
+
+    public function ajaxNeedAdmin(Request $req, Response $resp, $args) {
+        if( !isset($_SESSION[self::KEY]['type'])
+            || $_SESSION[self::KEY]['type'] != 'admin') {
+            return $resp->withStatus(200)->write('{"ok":false, "msg":"unauthencated"}');
+        }
+        if (!empty($args['group']) && !array_key_exists($args['group'], $this->getGroups())) {
+            return $resp->withStatus(200)->write('{"ok":false, "msg":"unauthencated"}');
         }
     }
 

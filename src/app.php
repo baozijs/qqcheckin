@@ -108,7 +108,7 @@ $app->get('/admin/{group}/statistics', function(Request $req, Response $resp, $a
         return $res;
     }
     return ModAdmin::inst()->viewStatistics($req, $resp, $args);
-})->setName('admin-statistics');;
+})->setName('admin-statistics');
 
 $app->post('/admin/{group}/upload', function(Request $req, Response $resp, $args) {
 
@@ -126,13 +126,20 @@ $app->get('/admin/{group}/upload', function(Request $req, Response $resp, $args)
     return ModAdmin::inst()->showUpload($req, $resp, $args);
 })->setName('admin-upload');
 
-$app->get('/admin/{group}/member', function(Request $req, Response $resp, $args){
-    if($res = ModAuth::inst()->needAdmin($req, $resp, $args)) {
+$app->get('/admin/{group}/member', function(Request $req, Response $resp, $args) {
+    if ($res = ModAuth::inst()->needAdmin($req, $resp, $args)) {
         return $res;
     }
     return ModAdmin::inst()->viewUsers($req, $resp, $args);
 })->setName('user-manage');
 
+$app->delete('/ajax/admin/{group}/member/{qqno}', function(Request $req, Response $resp, $args) {
+    if ($res = ModAuth::inst()->ajaxNeedAdmin($req, $resp, $args)) {
+        return $res;
+    }
+    $resp = ModAdmin::inst()->deleteUser($req, $resp, $args);
+    return $resp;
+});
 
 $app->get('/user/{group}[/{qqno}]', function(Request $req, Response $resp, $args) {
     return ModUser::inst()->viewByQqno($req, $resp, $args);

@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-03-14 01:03:31
+ * @Last Modified time: 2017-03-26 23:00:02
  */
 namespace ScalersTalk\Checkin;
 
@@ -209,6 +209,22 @@ class Admin extends CheckinBase {
         return $view->render($resp, "admin.twig", $args);
     }
 
+    public function deleteUser(Request $req, Response $resp, $args) {
+
+        $dataCheckin = new DataCheckin($args['group']);
+        $dataLeave = new DataLeave($args['group']);
+        $dataQQUser = new DataQQUser($args['group']);
+
+        $ok = $dataCheckin->deleteByQQno($args['qqno'])
+            && $dataLeave->deleteByQQno($args['qqno'])
+            && $dataQQUser->deleteByQQno($args['qqno']);
+
+        $ret = ['ok' => $ok];
+        $ret['msg'] = $ok ? 'success' : 'error';
+
+        return $resp->withStatus(200)->write(json_encode($ret));
+    }
+
     public function viewUsers(Request $req, Response $resp, $args) {
         $dataQQUser = new DataQQUser($args['group']);
         $qqusers = array_column(DataQQUser::asArray($dataQQUser->all()), null, 'qqno');
@@ -227,6 +243,7 @@ class Admin extends CheckinBase {
         });
 
         $args["qqusers"] = $qqusers;
+        $args['ajaxKickUrl'] = "/ajax/admin/${args['group']}/member/#qqno#";
         $view = $this->app->getContainer()['view'];
         return $view->render($resp, "members.twig", $args);
     }

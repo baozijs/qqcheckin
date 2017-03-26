@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 12:09:39
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-03-14 01:06:12
+ * @Last Modified time: 2017-03-26 22:34:48
  */
 namespace ScalersTalk\Data;
 
@@ -34,7 +34,7 @@ class Checkin extends Common {
         foreach($qqnos as $qqno) {
             try {
                 $query = new Query($this->table);
-                $query->equalTo("qqno", $qqno)->descend('when');
+                $query->equalTo("qqno", intval($qqno))->descend('when');
                 $obj = $query->first();
                 $objects[$qqno] = $obj->get('when');
             }
@@ -45,9 +45,5 @@ class Checkin extends Common {
         }
 
         return $objects;
-    }
-
-    public function removeQQNo($qqno) {
-        
     }
 }

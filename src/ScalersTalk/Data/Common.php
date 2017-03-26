@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 15:55:53
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-03-14 00:30:46
+ * @Last Modified time: 2017-03-27 00:18:18
  */
 
 namespace ScalersTalk\Data;
@@ -234,5 +234,28 @@ abstract class Common {
         return array_map(function($object) {
             return $object->toFullJSON();
         }, $result);
+    }
+
+    public function deleteByQQno($qqno, $field = null) {
+        try {
+            $field == null && $field = 'qqno';
+            $skip = 0;
+            do {
+                $query = new Query($this->table);
+                $query->equalTo($field, intval($qqno));
+                $query->skip($skip);
+                $query->limit(self::PACKNUM);
+                $objs = $query->find();
+                $count = count($objs);
+                $skip += $count;
+                Object::destroyAll($objs);
+            }
+            while($count == self::PACKNUM);
+            return true;
+        }
+        catch (CloudException $e) {
+            Log::debug($e->getMessage());
+            return false;
+        }
     }
 }

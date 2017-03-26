@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-24 01:18:54
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-03-13 01:09:55
+ * @Last Modified time: 2017-03-15 08:04:44
  */
 namespace ScalersTalk\Setting;
 
@@ -69,6 +69,7 @@ class Config {
                     'train001',
                     'train002',
                     'train003',
+                    'test',
                 ],
             ],
             'superadmin' => [
