@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-03-26 23:00:02
+ * @Last Modified time: 2017-03-26 23:16:03
  */
 namespace ScalersTalk\Checkin;
 
@@ -218,6 +218,22 @@ class Admin extends CheckinBase {
         $ok = $dataCheckin->deleteByQQno($args['qqno'])
             && $dataLeave->deleteByQQno($args['qqno'])
             && $dataQQUser->deleteByQQno($args['qqno']);
+
+        $ret = ['ok' => $ok];
+        $ret['msg'] = $ok ? 'success' : 'error';
+
+        return $resp->withStatus(200)->write(json_encode($ret));
+    }
+
+    public function cleanData(Request $req, Response $resp, $args) {
+
+        $dataCheckin = new DataCheckin($args['group']);
+        $dataLeave = new DataLeave($args['group']);
+        $dataQQUser = new DataQQUser($args['group']);
+
+        $ok = $dataCheckin->cleanData('hash')
+            && $dataLeave->cleanData('hash')
+            && $dataQQUser->cleanData('qqno');
 
         $ret = ['ok' => $ok];
         $ret['msg'] = $ok ? 'success' : 'error';

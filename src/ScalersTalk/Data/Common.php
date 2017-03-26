@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 15:55:53
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-03-27 00:18:18
+ * @Last Modified time: 2017-03-27 00:26:44
  */
 
 namespace ScalersTalk\Data;
@@ -251,6 +251,41 @@ abstract class Common {
                 Object::destroyAll($objs);
             }
             while($count == self::PACKNUM);
+            return true;
+        }
+        catch (CloudException $e) {
+            Log::debug($e->getMessage());
+            return false;
+        }
+    }
+
+    public function cleanData($field) {
+
+        try {
+            $uniqued = [];
+            $all = [];
+            $skip = 0;
+            do {
+                $query = new Query($this->table);
+                $query->skip($skip);
+                $query->limit(self::PACKNUM);
+                $objs = $query->find();
+                $count = count($objs);
+                $skip += self::PACKNUM;
+
+                foreach($objs as $obj) {
+                    $all[] = $obj->get('objectId');
+                    $uniqued[$obj->get($field)] = $obj->get('objectId');
+                }
+            }
+            while($count == self::PACKNUM);
+
+            $diff = array_diff($all, $uniqued);
+            $objs = array_map(function($objId) {
+                return Object::create($this->table, $objId);
+            }, $diff);
+            Object::destroyAll($objs);
+            Log::debug($this->table . " cleanData " . count($objs));
             return true;
         }
         catch (CloudException $e) {

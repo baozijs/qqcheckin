@@ -145,5 +145,13 @@ $app->get('/user/{group}[/{qqno}]', function(Request $req, Response $resp, $args
     return ModUser::inst()->viewByQqno($req, $resp, $args);
 })->setName('user-view');
 
+$app->get('/ajax/admin/{group}/clean', function(Request $req, Response $resp, $args) {
+    if ($res = ModAuth::inst()->ajaxNeedAdmin($req, $resp, $args)) {
+        return $res;
+    }
+    $resp = ModAdmin::inst()->cleanData($req, $resp, $args);
+    return $resp;
+});
+
 $app->run();
 
