@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:52:25
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-30 02:15:31
+ * @Last Modified time: 2017-04-19 21:21:02
  */
 
 namespace ScalersTalk\Util;
@@ -67,8 +67,11 @@ class ChatParser {
         }
         else {
             list($month_day, $when) = func_get_args();
-            if(preg_match('/^(\d{1,2})[\.]?(\d{1,2})$/i', $month_day, $match)) {
+            if(preg_match('/^(\d{1,2})[\.\-]?(\d{1,2})$/i', $month_day, $match)) {
                 list($_, $month, $day) = $match;
+            }
+            else {
+                return strtotime('midnight');
             }
         }
 
