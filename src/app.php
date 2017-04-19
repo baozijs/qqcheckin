@@ -26,6 +26,7 @@ define('DEBUG', true);
 
 define('DEFAULT_START', "sun 1 week ago");
 define('DEFAULT_END', "last sat");
+define('MONTH_STAT', 10);
 
 session_start();
 $app = new \Slim\App();
@@ -80,6 +81,7 @@ $app->get('/admin[/superadmin/{superadmin}]', function (Request $req, Response $
     if($res = ModAuth::inst()->needAdmin($req, $resp, $args)) {
         return $res;
     }
+    $args['_recent'] = MONTH_STAT;
     return ModAdmin::inst()->showAdmin($req, $resp, $args);
 })->setName('admin-home');
 

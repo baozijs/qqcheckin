@@ -15,7 +15,7 @@
                 <tr>
                     <th class="text-right">成员/项目</th>
                     <th class="text-center">{{ '总 计'}}</th>
-                    {% for i in range(5, 1) %}
+                    {% for i in range(_recent, 1) %}
                     <th class="text-center">{{ '第'~i~'周'}}</th>
                     {% endfor %}
                     {% for i in _items %}
@@ -52,7 +52,7 @@
                 <tr>
                     <th class="text-right">成员/项目</th>
                     <th class="text-center">{{ '总 计'}}</th>
-                    {% for i in range(5, 1) %}
+                    {% for i in range(_recent, 1) %}
                     <th class="text-center">{{ i~'周'}}</th>
                     {% endfor %}
                 </tr>
