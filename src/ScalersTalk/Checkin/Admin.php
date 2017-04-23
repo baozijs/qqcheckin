@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-04-19 19:54:28
+ * @Last Modified time: 2017-04-23 22:19:03
  */
 namespace ScalersTalk\Checkin;
 
@@ -167,8 +167,8 @@ class Admin extends CheckinBase {
         $_statistics2 = array_combine($_qqnos, array_fill(0, count($_qqnos), array_combine(array_reverse(range($start, $end, 604800)), array_fill(0, self::MONTH_STAT, 0))));
 
         // 获得数据
-        $_leaves = $dataLeave->allWithDate($start, $end);
-        $_checkins = $dataCheckin->allWithDate($start, $end);
+        $_leaves = $dataLeave->allWithDateWithQQNo($start, $end, $_qqnos);
+        $_checkins = $dataCheckin->allWithDateWithQQNo($start, $end, $_qqnos);
 
         // 统计
         array_map(function($obj) use(&$_statistics1, &$_statistics2) {

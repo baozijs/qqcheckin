@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 15:55:53
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-03-27 00:26:44
+ * @Last Modified time: 2017-04-23 22:37:46
  */
 
 namespace ScalersTalk\Data;
@@ -191,6 +191,52 @@ abstract class Common {
                 );
 
                 $ret = Query::doCloudQuery($cql, [$begindate, $enddate]);
+                $objects = array_merge($objects, $ret['results']);
+                $skip += self::PACKNUM;
+            }
+            while(count($ret['results']) == self::PACKNUM);
+        }
+        catch(CloudException $e) {
+            Log::debug($e->getMessage());
+        }
+
+        return $objects;
+    }
+
+    protected function allWithDateWithQQNo($begindate, $enddate, $qqnos = null) {
+        $objects = [];
+
+        if ($qqnos) {
+            if (is_array($qqnos)) {
+                $qqnos = implode(",", $qqnos);
+            }
+        }
+
+        try {
+            $skip = 0;
+            do {
+                if (!$qqnos) {
+                    $cql = sprintf("select * from %s where date between %d and %d limit %d, %d"
+                        , $this->table
+                        , $begindate
+                        , $enddate
+                        , $skip
+                        , self::PACKNUM
+                    );
+                }
+                else {
+                    $cql = sprintf("select * from %s where date between %d and %d and qqno in (%s) limit %d, %d"
+                        , $this->table
+                        , $begindate
+                        , $enddate
+                        , $qqnos
+                        , $skip
+                        , self::PACKNUM
+                    );
+                    // die($cql);
+                }
+
+                $ret = Query::doCloudQuery($cql);
                 $objects = array_merge($objects, $ret['results']);
                 $skip += self::PACKNUM;
             }
