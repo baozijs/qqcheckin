@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 15:55:53
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-04-23 22:37:46
+ * @Last Modified time: 2017-04-23 22:51:39
  */
 
 namespace ScalersTalk\Data;
@@ -96,6 +96,11 @@ abstract class Common {
             return $exists;
         }
         catch (CloudException $ex) {
+            Log::debug($cql);
+            Log::debug($ex->getMessage());
+            Log::debug(json_encode(array_merge($hashes, [$skip])));
+        }
+        catch (RuntimeException $ex) {
             Log::debug($cql);
             Log::debug($ex->getMessage());
             Log::debug(json_encode(array_merge($hashes, [$skip])));
