@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-24 01:07:49
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-03-13 01:05:54
+ * @Last Modified time: 2017-07-31 21:46:18
  */
 namespace ScalersTalk\Setting;
 
@@ -117,7 +117,14 @@ class Items {
         ],
         "kuang17" => 'ITEMS17',
         "ling17" => 'ITEMS17',
-        "train001" => 'ITEMS17',
+        'ling003' => 'ITEMS17',
+        'kuang003' => 'ITEMS17',
+        'ling004' => 'ITEMS17',
+        'kuang004' => 'ITEMS17',
+        'ling005' => 'ITEMS17',
+        'kuang005' => 'ITEMS17',
+        'ling006' => 'ITEMS17',
+        'kuang006' => 'ITEMS17',
         "test" => 'ITEMS17',
     ];
 

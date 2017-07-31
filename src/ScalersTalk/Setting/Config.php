@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-24 01:18:54
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-03-15 08:04:44
+ * @Last Modified time: 2017-07-31 22:12:19
  */
 namespace ScalersTalk\Setting;
 
@@ -14,9 +14,14 @@ class Config {
             'ling' => '零基础2016',
             'kuang17' => '狂练2017',
             'ling17' => '零基础2017',
-            'train001' => '训练营001',
-            'train002' => '训练营002',
-            'train003' => '训练营003',
+            'ling003' => '零阶训练营3期',
+            'kuang003' => '狂阶训练营3期',
+            'ling004' => '零阶训练营4期',
+            'kuang004' => '狂阶训练营4期',
+            'ling005' => '零阶训练营5期',
+            'kuang005' => '狂阶训练营5期',
+            'ling006' => '零阶训练营6期',
+            'kuang006' => '狂阶训练营6期',
             'nce3' => '新概念3',
             'test' => '用于测试',
         ],
@@ -24,33 +29,21 @@ class Config {
             'crazy' => [
                 'pass' => 'apple',
                 'groups' => [
-                    'kuang',
                     'kuang17',
+                    'kuang003',
+                    // 'kuang004',
+                    // 'kuang005',
+                    // 'kuang006',
                 ],
             ],
             'zero' => [
                 'pass' => 'pear',
                 'groups' => [
-                    'ling',
                     'ling17',
-                ],
-            ],
-            'train001' => [
-                'pass' => 'grape',
-                'groups' => [
-                    'train001',
-                ],
-            ],
-            'train002' => [
-                'pass' => 'blackberry',
-                'groups' => [
-                    'train002',
-                ],
-            ],
-            'train003' => [
-                'pass' => 'watermelon',
-                'groups' => [
-                    'train003',
+                    'ling003',
+                    // 'ling004',
+                    // 'ling005',
+                    // 'ling006',
                 ],
             ],
             'nce3' => [
@@ -62,13 +55,16 @@ class Config {
             'manager' => [
                 'pass' => 'banana',
                 'groups' => [
-                    'kuang',
-                    'ling',
                     'kuang17',
                     'ling17',
-                    'train001',
-                    'train002',
-                    'train003',
+                    'ling003',
+                    'kuang003',
+                    // 'ling004',
+                    // 'kuang004',
+                    // 'ling005',
+                    // 'kuang005',
+                    // 'ling006',
+                    // 'kuang006',
                     'test',
                 ],
             ],

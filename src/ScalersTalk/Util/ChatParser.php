@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:52:25
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-04-19 21:21:02
+ * @Last Modified time: 2017-07-31 21:34:48
  */
 
 namespace ScalersTalk\Util;
@@ -27,7 +27,7 @@ class ChatParser {
     // 
     private $re_checkin_date = "(?P<month>\d{1,2})[\.\-]?(?P<day>\d{1,2})[\s\-]*";
     private $re_checkin_item = "(?P<item>%s)";
-    private $re_checkin_rate = "[\s\-]*(?P<rate>\d{1,2}|100)\%?";
+    private $re_checkin_rate = "[\s\-]*(?P<rate>(\d{1,2}(?:\.\d{1,2})?)|100)\%?";
 
     private $content;
     private $lastUpdate;
