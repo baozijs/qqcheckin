@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-24 01:07:49
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-07-31 21:46:18
+ * @Last Modified time: 2018-01-07 16:59:25
  */
 namespace ScalersTalk\Setting;
 
@@ -86,6 +86,36 @@ class Items {
             ],
         ],
         'nce3' => [
+            'read' => [
+                'name' => '朗读',
+                'valid' => '语音',
+            ],
+            'recite' => [
+                'name' => '复述',
+                'valid' => '语音',
+            ],
+            'retell' => [
+                'name' => '背诵',
+                'valid' => false,
+            ],
+            'comment' => [
+                'name' => '点评',
+                'valid' => false,
+            ],
+            'review-weekly' => [
+                'name' => '周复盘',
+                'valid' => false,
+            ],
+            'review-group' => [
+                'name' => '群复盘',
+                'valid' => false,
+            ],
+            'review-monthly' => [
+                'name' => '月复盘',
+                'valid' => false,
+            ],
+        ],
+        'nce2' => [
             'read' => [
                 'name' => '朗读',
                 'valid' => '语音',

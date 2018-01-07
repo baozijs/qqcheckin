@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-24 01:18:54
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-07-31 22:12:19
+ * @Last Modified time: 2018-01-07 17:02:42
  */
 namespace ScalersTalk\Setting;
 
@@ -23,6 +23,7 @@ class Config {
             'ling006' => '零阶训练营6期',
             'kuang006' => '狂阶训练营6期',
             'nce3' => '新概念3',
+            'nce2' => '新概念2',
             'test' => '用于测试',
         ],
         'users' => [
@@ -50,6 +51,12 @@ class Config {
                 'pass' => 'durian',
                 'groups' => [
                     'nce3',
+                ],
+            ],
+            'nce2' => [
+                'pass' => 'durian',
+                'groups' => [
+                    'nce2',
                 ],
             ],
             'manager' => [
