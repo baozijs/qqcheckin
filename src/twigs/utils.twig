@@ -1,5 +1,5 @@
 {% macro checkin_span(c) %}
-    {% set clazz = 'do do-'~c.itemkey %}
+    {% set clazz = 'do2 do-'~c.itemkey %}
     {% set title = c.item %}
 
     {% if not c.isvalid %}
@@ -17,22 +17,22 @@
             {% set title = title ~ c.when|date('(m-d补)') %}
         {% endif %}
     {% endif %}
-    <span class="{{ clazz }}" title="{{ title }}" data-toggle="tooltip" data-placement="top"></span>
+    <span class="{{ clazz }}" title="{{ title }}" data-toggle="tooltip" data-placement="top">{{title|first}}</span>
 {% endmacro %}
 
 {% macro leave_span(c) %}
-    {% set clazz = 'do do-'~c.itemkey %}
+    {% set clazz = 'do2 do-'~c.itemkey %}
     {% set title = c.date|date('m-d')~'请假' %}
     {% if not c.isvalid %}
         {% set clazz = clazz ~ ' do-invalid' %}
         {% set title = title ~ '('~c.when|date('m-d')~'向前补假无效)' %}
         {{ _self.null_span() }}
     {% endif %}
-    <span class="{{ clazz }}" title="{{ title }}" data-toggle="tooltip" data-placement="top"></span>
+    <span class="{{ clazz }}" title="{{ title }}" data-toggle="tooltip" data-placement="top">假</span>
 {% endmacro %}
 
 {% macro null_span() %}
-    <span class="do do-null"></span>
+    <span class="do2 do-null">旷</span>
 {% endmacro %}
 
 {% macro weekpicker(cid, start, end) %}

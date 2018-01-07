@@ -2,7 +2,7 @@
 * @Author: AminBy
 * @Date:   2016-10-26 18:50:50
 * @Last Modified by:   AminBy
-* @Last Modified time: 2017-03-13 01:00:01
+* @Last Modified time: 2018-01-07 18:53:41
 */
 .do {
     background-image: url(./Group@1x.png);
@@ -16,60 +16,91 @@
     margin: 1px;
 }
 
-.do-dictate {}
-.do-dictate1, .do-dictate2, .do-dictate3 {
+.do.do-dictate {}
+.do.do-dictate1, .do.do-dictate2, .do.do-dictate3 {
     background-position-x: -157px;
 }
-.do-note {
+.do.do-note {
     background-position-x: -28px;
 }
-.do-read {
+.do.do-read {
     background-position-x: -46px;
 }
-.do-recite {
+.do.do-recite {
     background-position-x: -65px;
 }
-.do-review {
+.do.do-review {
     background-position-x: -83px;
 }
-.do-write {
+.do.do-write {
     background-position-x: -102px;
 }
-.do-revise {
+.do.do-revise {
     background-position-x: -175px;
 }
-.do-leave {
+.do.do-leave {
     background-position-x: -120px;
 }
-.do-fill {
+.do.do-fill {
     background-position-y: -48px;
     border-color: #4A90E2;
 }
-.do-invalid {
+.do.do-invalid {
     background-position-y: -79px;
     border-color: #9B9B9B;
 }
-.do-error {
+.do.do-error {
     background-position-y: -110px;
     border-color: #D0021B;
 }
-.do-null {
+.do.do-null {
     background-position-x: -138px;
     background-position-y: -110px;
     border-color: #D0021B;
 }
-.do-retell {
+.do.do-retell {
     background-position-x: -193px;
 }
-.do-comment {
+.do.do-comment {
     background-position-x: -212px;
 }
-.do-review-weekly {
+.do.do-review-weekly {
     background-position-x: -230px;
 }
-.do-review-group {
+.do.do-review-group {
     background-position-x: -249px;
 }
-.do-review-monthly {
+.do.do-review-monthly {
     background-position-x: -268px;
+}
+
+.do2 {
+    font-size: 12px;
+    display: inline-block;
+    border: 1px solid;
+    border-radius: 3px;
+    margin: 2px 1px;
+    padding: 1px 3px 0;
+    border-color: green;
+    color: green;
+    cursor: default !important;
+}
+.do2.do-fill {
+    border-color: #00adff;
+    color: #00adff;
+}
+.do2.do-invalid {
+    border-color: gray;
+    color: gray;
+}
+.do2.do-error {
+    border-color: red;
+    color: red;
+}
+.do2.do-null {
+    border-color: red;
+    color: red;
+}
+.table.table-records>tbody>tr>td {
+    vertical-align: middle;
 }
