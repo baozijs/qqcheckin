@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:52:25
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-07-31 21:34:48
+ * @Last Modified time: 2018-01-12 23:24:47
  */
 
 namespace ScalersTalk\Util;
@@ -302,7 +302,7 @@ class ChatParser {
                 if($when <= $this->lastUpdate) {
                     continue;
                 }
-                $this->qqno_nicks[$qqno]  = $match['nick'];
+                $this->qqno_nicks[$qqno]  = '管理员';
             }
             elseif($qqno !== null && $when !== null) {
                 if($when <= $this->lastUpdate) {

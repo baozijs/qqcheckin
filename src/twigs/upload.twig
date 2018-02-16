@@ -6,7 +6,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="lead">
-              <h3>{{ groups[group] }} <font color="gray">更新打卡记录</font></h3>
+              <h3>{{ groups[group]['gname'] }} <font color="gray">更新打卡记录</font></h3>
               <form role="form" action="/admin/{{ group }}/upload" method="POST" enctype="multipart/form-data">
                   <div class="form-group">
                     <label for="exampleInputFile">QQ聊天记录:</label>

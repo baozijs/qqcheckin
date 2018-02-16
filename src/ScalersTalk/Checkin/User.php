@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:53:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-02-03 00:07:48
+ * @Last Modified time: 2018-02-16 19:28:10
  */
 namespace ScalersTalk\Checkin;
 
@@ -17,8 +17,6 @@ use \LeanCloud\Engine\SlimEngine;
 use \ScalersTalk\Data\Checkin as DataCheckin;
 use \ScalersTalk\Data\Leave as DataLeave;
 use \ScalersTalk\Data\QQUser as DataQQUser;
-use \ScalersTalk\Setting\Items;
-use \ScalersTalk\Setting\Config;
 
 class User extends CheckinBase {
     const DEFAULT_END = DEFAULT_END;

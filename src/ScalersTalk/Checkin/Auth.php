@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:30
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-03-15 08:13:33
+ * @Last Modified time: 2018-02-16 08:57:22
  */
 namespace ScalersTalk\Checkin;
 
@@ -15,6 +15,8 @@ use \LeanCloud\Storage\CookieStorage;
 use \LeanCloud\Engine\SlimEngine;
 use \LeanCloud\Query;
 use \LeanCloud\Object;
+use \ScalersTalk\Data\Group as DataGroup;
+use \ScalersTalk\Data\Manager as DataManager;
 
 use \ScalersTalk\Setting\Config;
 
@@ -51,30 +53,37 @@ class Auth extends CheckinBase {
         $body = $req->getParsedBody();
         extract($body);
 
-        $users = Config::get('users');
-        if (isset($users[$user])
-            && isset($users[$user]['pass'])
-            && isset($users[$user]['groups'])
-            && $users[$user]['pass'] == $pass)
-        {
-            $groups = Config::get('groups');
-            $grpkeys = $users[$user]['groups'];
-            if ($grpkeys == 'ALL') {
-                $grpkeys = array_keys($groups);
-            }
 
-            $_SESSION[self::KEY] = [
+        $dataManager = new DataManager();
+        $manager = $dataManager->fetchAsArray($user, $pass);
+        if ($manager != null) {
+            $dataGroup = new DataGroup();
+
+            $mgr = [
                 'type' => 'admin',
                 'user' => $user,
-                'groups' => array_intersect_key($groups, array_flip($grpkeys))
             ];
+            // 超级管理员, 加载所有分组
+            if ($manager['sadmin']) {
+                $groups = $dataGroup->queryAllAsArray();
+            }
+            // 超级管理员, 只加载有权限的分组
+            else {
+                $groups = $dataGroup->queryByManagerAsArray($manager['name']);
+            }
+            $mgr['groups'] = array_column($groups, null, 'gid');
 
+            $_SESSION[self::KEY] = $mgr;
             $router = $this->app->getContainer()['router'];
             return $resp->withStatus(302)->withHeader('Location', $router->pathFor('admin-home'));
+        }
+        else {
+            echo "登录失败";
         }
     }
 
     public function getGroups() {
+        // print_r($_SESSION[self::KEY]);
         if (isset($_SESSION[self::KEY]) && !isset($_SESSION[self::KEY]['groups'])) {
             $req = $this->app->getContainer()->get('request');
             $resp = $this->app->getContainer()->get('response');

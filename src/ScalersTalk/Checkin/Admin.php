@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-04-23 22:19:03
+ * @Last Modified time: 2018-02-16 19:28:12
  */
 namespace ScalersTalk\Checkin;
 
@@ -18,9 +18,9 @@ use \ScalersTalk\Data\Checkin as DataCheckin;
 use \ScalersTalk\Data\Leave as DataLeave;
 use \ScalersTalk\Data\QQUser as DataQQUser;
 use \ScalersTalk\Data\Config as DataConfig;
+use \ScalersTalk\Data\Group as DataGroup;
+use \ScalersTalk\Data\GroupItem as DataGroupItem;
 use \ScalersTalk\Util\ChatParser;
-use \ScalersTalk\Setting\Items;
-use \ScalersTalk\Setting\Config;
 
 use \ScalersTalk\Checkin\Auth as ModAuth;
 
@@ -56,7 +56,8 @@ class Admin extends CheckinBase {
         $lastUpdated = $dataConfig->get('lastUpdated', 0);
 
         // 解析上传的文件
-        $chatParser = new ChatParser($tmpfile, Items::get($args['group']), $lastUpdated);
+        $items = (new DataGroupItem)->fetchByGidAsArray($group);
+        $chatParser = new ChatParser($tmpfile, $items, $lastUpdated);
         $chatParser->parse();
 
         // 保存
@@ -152,7 +153,8 @@ class Admin extends CheckinBase {
         $start = strtotime("-${args['_recent']} weeks +1 day", $end);
 
         // 项目
-        $items = Items::get($group) + [
+        $items = (new DataGroupItem)->fetchByGidAsArray($group);
+        $items = $items + [
             'leave' => [
                 'name' => '请假',
                 'valid' => false,

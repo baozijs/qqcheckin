@@ -6,9 +6,9 @@
     <div class="row">
         <div class="col-md-12">
             <h3>Dashboard</h3>
-            {% for key, name in groups %}
+            {% for key, group in groups %}
               <div>
-              <h4>{{ name }}</h4>
+              <h4>{{ group.gname }}</h4>
               <a class="btn btn-primary" href="{{ path_for('admin-upload', {group: key}) }}">更新打卡</a>
               <a class="btn btn-success"  href="{{ path_for('admin-view', {group: key}) }}">每周数据</a>
               <a class="btn btn-info"  href="{{ path_for('admin-statistics', {group: key}) }}">最近{{ _recent }}周统计</a>
