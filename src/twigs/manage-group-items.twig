@@ -1,0 +1,129 @@
+{% extends 'base.twig' %}
+
+{% block page_title %}{{ grp.gname }} 项目管理{% endblock %}
+
+{% block main_content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="lead">
+                <h3>{{ '<< '~grp.gname~' 项目管理>>' }}</h3>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <p class="text-right"><button class="btn btn-primary" onclick="editGroupItem({})">New</button></p>
+        </div>
+        <div class="col-md-12">
+            <table class="table table-striped table-condensed">
+                <tr>
+                    <th class="text-left">ID</th>
+                    <th>名称</th>
+                    <th>验证项</th>
+                    <th>图标</th>
+                    <th>操作</th>
+                </tr>
+                {% for item in items %}
+                <tr>
+                    <td class="text-left">{{ item.key }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.valid }}</td>
+                    <td>
+                        <span class="do2 do-{{ item.key }}" title="图标示例" data-toggle="tooltip" data-placement="top">{{ (item.icon ? item.icon : item.name)|first}}</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-default btn-xs" onclick="editGroupItem({{ item|json_encode }})">编辑</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div id="group-item-edit-form" style="display: none">
+        <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+            <form action="/ajax/manage/group/{{ grp.gid }}/items">
+                <div class="form-group">
+                  <label for="key">Key</label>
+                  <input type="text" class="form-control" name="key" id="key" placeholder="letters, digits or underlines">
+                </div>
+                <div class="form-group">
+                  <label for="name">Key Name</label>
+                  <input type="text" class="form-control" name="name" id="name" placeholder="as you like">
+                </div>
+                <div class="form-group">
+                  <label for="icon">Icon</label>
+                  <input type="text" class="form-control" name="icon" id="icon" placeholder="one word">
+                </div>
+                <div class="form-group">
+                  <label for="valid">Valid</label>
+                  <select class="form-control" name="valid" id="valid">
+                    <option value="">无需验证</option>
+                    <option value="语音">语音</option>
+                    <option value="图片">图片</option>
+                  </select>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+
+{% block page_link %}
+    {{ parent() }}
+    <link type="text/css" rel="stylesheet" href="/plugins/layer/theme/default/layer.css">
+{% endblock %}
+
+{% block page_script_src %}
+    {{ parent() }}
+    <script type="text/javascript" src="/plugins/layer/layer.js"></script>
+{% endblock %}
+
+{% block page_script %}
+{{ parent() }}
+function submitEditGroupItem($form, layerindex) {
+    var url = $form.attr('action'), data = $form.serialize(), ret;
+    console.log(url, data);
+    $.ajax({
+        data: data,
+        type: 'POST',
+        url: url,
+        dataType: 'json',
+        success: function(data) {
+            console.log(data);
+            if (!data.ok) {
+                alert(data.msg);
+            }
+            else {
+                layer.close(layerindex);
+                location.reload();
+            }
+        }
+    });
+    return true;
+}
+function editGroupItem(grpitem) {
+    var is_new = !grpitem.key;
+    if (is_new) {
+        grpitem.key = Math.random().toString(36).substr(2);
+    }
+    $('#group-item-edit-form [name=key]').val(grpitem.key).attr('readonly', !is_new);
+    $('#group-item-edit-form [name=name]').val(grpitem.name);
+    $('#group-item-edit-form [name=icon]').val(grpitem.icon);
+    $('#group-item-edit-form [name=valid]').val(grpitem.valid);
+    if (!grpitem.valid) {
+        $('#group-item-edit-form [name=valid]').val("");
+    }
+    layer.open({
+      type: 1,
+      shade: true,
+      title: (is_new ? 'Creating group item' : 'Editing group item'),
+      area: '600px',
+      content: $('#group-item-edit-form'),
+      btn: ['Submit'],
+      yes: function(index, layero) {
+          submitEditGroupItem($('form', layero), index);
+      }
+    });
+}
+{% endblock %}

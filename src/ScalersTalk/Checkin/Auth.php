@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:30
  * @Last Modified by:   AminBy
- * @Last Modified time: 2018-02-16 08:57:22
+ * @Last Modified time: 2018-02-21 23:52:12
  */
 namespace ScalersTalk\Checkin;
 
@@ -22,7 +22,7 @@ use \ScalersTalk\Setting\Config;
 
 class Auth extends CheckinBase {
     const KEY = '_CHECKINUSER';
-    public function needAdmin(Request $req, Response $resp, $args) {
+    public function needAdmin(Request $req, Response $resp, $args, $sadmin = false) {
         if( !isset($_SESSION[self::KEY]['type'])
             || $_SESSION[self::KEY]['type'] != 'admin') {
             $router = $this->app->getContainer()['router'];
@@ -31,14 +31,26 @@ class Auth extends CheckinBase {
         if (!empty($args['group']) && !array_key_exists($args['group'], $this->getGroups())) {
             die('Not enough power to do this!');
         }
+        if (!empty($args['gid']) && !array_key_exists($args['gid'], $this->getGroups())) {
+            die('Not enough power to do this!');
+        }
+        if ($sadmin && !$_SESSION[self::KEY]['manager']['sadmin']) {
+            die('Not enough power to do this!');
+        }
     }
 
-    public function ajaxNeedAdmin(Request $req, Response $resp, $args) {
+    public function ajaxNeedAdmin(Request $req, Response $resp, $args, $sadmin = false) {
         if( !isset($_SESSION[self::KEY]['type'])
             || $_SESSION[self::KEY]['type'] != 'admin') {
             return $resp->withStatus(200)->write('{"ok":false, "msg":"unauthencated"}');
         }
         if (!empty($args['group']) && !array_key_exists($args['group'], $this->getGroups())) {
+            return $resp->withStatus(200)->write('{"ok":false, "msg":"unauthencated"}');
+        }
+        if (!empty($args['gid']) && !array_key_exists($args['gid'], $this->getGroups())) {
+            return $resp->withStatus(200)->write('{"ok":false, "msg":"unauthencated"}');
+        }
+        if ($sadmin && !$_SESSION[self::KEY]['manager']['sadmin']) {
             return $resp->withStatus(200)->write('{"ok":false, "msg":"unauthencated"}');
         }
     }
@@ -61,7 +73,7 @@ class Auth extends CheckinBase {
 
             $mgr = [
                 'type' => 'admin',
-                'user' => $user,
+                'manager' => $manager,
             ];
             // 超级管理员, 加载所有分组
             if ($manager['sadmin']) {
@@ -78,7 +90,7 @@ class Auth extends CheckinBase {
             return $resp->withStatus(302)->withHeader('Location', $router->pathFor('admin-home'));
         }
         else {
-            echo "登录失败";
+            die("登录失败");
         }
     }
 

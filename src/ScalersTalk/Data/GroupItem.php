@@ -19,6 +19,33 @@ class GroupItem extends Common {
         $this->table = 'CheckinGroupItem';
     }
 
+    public function saveGroupItem($gid, $item) {
+        $query = new Query($this->table);
+        $query->equalTo('gid', $gid);
+        $query->equalTo('key', $item['key']);
+
+        try {
+            if ($query->count() > 0) {
+                $obj = $query->first();
+            }
+            else {
+                $obj = new Object($this->table);
+                $obj->set('key', $item['key']);
+                $obj->set('gid', $gid);
+            }
+            $obj->set('name', $item['name']);
+            $obj->set('valid', empty($item['valid']) ? "" : $item['valid']);
+            $obj->set('icon', empty($item['icon']) ? "" : $item['icon']);
+            $obj->save();
+        }
+        catch (CloudException $ex) {
+            Log::debug($ex->getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
     public function fetchByGid($gid) {
         $query = new Query($this->table);
         $query->equalTo('gid', $gid);
@@ -29,7 +56,9 @@ class GroupItem extends Common {
         $ret = [];
         foreach($this->fetchByGid($gid) as $item) {
             $ret[$item->get('key')] = [
+                'key' => $item->get('key'),
                 'name' => $item->get('name'),
+                'icon' => $item->get('icon'),
                 'valid' => empty($item->get('valid')) ? false : $item->get('valid')
             ];
         }

@@ -52,3 +52,11 @@
   });
 </script>
 {% endmacro %}
+
+{% macro multipleselect(items, fk, fv, selected) %}
+<select multiple="multiple">
+    {% for item in items %}
+    <option value="{{ item[fk] }}" {{ (item[fk] in selected) ? 'selected="selected"' : '' }}>{{ item[fv] }}</option>
+    {% endfor %}
+</select>
+{% endmacro %}

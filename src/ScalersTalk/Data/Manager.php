@@ -4,7 +4,7 @@
  * @Author: AminBy
  * @Date:   2018-01-12 23:26:02
  * @Last Modified by:   AminBy
- * @Last Modified time: 2018-02-16 08:24:31
+ * @Last Modified time: 2018-02-21 23:51:41
  */
 namespace ScalersTalk\Data;
 
@@ -18,7 +18,7 @@ class Manager extends Common {
     }
 
     public function loadUsersAsArray($filter = null) {
-        self::asArray($this->loadUsers());
+        return self::asArray($this->loadUsers());
     }
 
     public function loadUsers($filter = null) {
@@ -38,6 +38,35 @@ class Manager extends Common {
         $query = new Query($this->table);
         $query->equalTo('name', $name);
         $query->equalTo('pass', md5($pass));
-        return $query->first();
+        return $query->count() ? $query->first() : null;
+    }
+
+    public function saveManager($manager) {
+        $query = new Query($this->table);
+        $query->equalTo('name', $manager['name']);
+
+        try {
+            if ($query->count() > 0) {
+                $obj = $query->first();
+                if (!empty($manager['pass'])) {
+                    $obj->set('pass', md5($manager['pass']));
+                }
+            }
+            else {
+                $obj = new Object($this->table);
+                $obj->set('name', $manager['name']);
+                empty($manager['pass']) && $manager['pass'] = 'scalerstalk';
+                $obj->set('pass', md5($manager['pass']));
+            }
+            $obj->set('note', $manager['note']);
+            $obj->set('sadmin', !!$manager['sadmin']);
+            $obj->save();
+        }
+        catch (CloudException $ex) {
+            Log::debug($ex->getMessage());
+            return false;
+        }
+
+        return true;
     }
 }

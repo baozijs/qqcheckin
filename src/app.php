@@ -21,6 +21,7 @@ use \LeanCloud\Object;
 use \ScalersTalk\Checkin\Auth as ModAuth;
 use \ScalersTalk\Checkin\Admin as ModAdmin;
 use \ScalersTalk\Checkin\User as ModUser;
+use \ScalersTalk\Checkin\System as ModSystem;
 
 define('DEBUG', true);
 
@@ -33,6 +34,7 @@ $app = new \Slim\App();
 ModAuth::init($app);
 ModAdmin::init($app);
 ModUser::init($app);
+ModSystem::init($app);
 
 // 禁用 Slim 默认的 handler，使得错误栈被日志捕捉
 unset($app->getContainer()['errorHandler']);
@@ -143,10 +145,6 @@ $app->delete('/ajax/admin/{group}/member/{qqno}', function(Request $req, Respons
     return $resp;
 });
 
-$app->get('/user/{group}[/{qqno}]', function(Request $req, Response $resp, $args) {
-    return ModUser::inst()->viewByQqno($req, $resp, $args);
-})->setName('user-view');
-
 $app->get('/ajax/admin/{group}/clean', function(Request $req, Response $resp, $args) {
     if ($res = ModAuth::inst()->ajaxNeedAdmin($req, $resp, $args)) {
         return $res;
@@ -154,6 +152,65 @@ $app->get('/ajax/admin/{group}/clean', function(Request $req, Response $resp, $a
     $resp = ModAdmin::inst()->cleanData($req, $resp, $args);
     return $resp;
 });
+
+/**
+ * for sadmin
+ */
+$app->get('/manage/group', function (Request $req, Response $resp, $args) {
+    if($res = ModAuth::inst()->needAdmin($req, $resp, $args, true)) {
+        return $res;
+    }
+    return ModSystem::inst()->showGroups($req, $resp, $args);
+});
+
+$app->post('/ajax/manage/group', function (Request $req, Response $resp, $args) {
+    if($res = ModAuth::inst()->ajaxNeedAdmin($req, $resp, $args, true)) {
+        return $res;
+    }
+    return ModSystem::inst()->saveGroup($req, $resp, $args);
+});
+
+$app->get('/manage/manager', function (Request $req, Response $resp, $args) {
+    if($res = ModAuth::inst()->needAdmin($req, $resp, $args, true)) {
+        return $res;
+    }
+    return ModSystem::inst()->showManagers($req, $resp, $args);
+});
+
+$app->post('/ajax/manage/manager', function (Request $req, Response $resp, $args) {
+    if($res = ModAuth::inst()->ajaxNeedAdmin($req, $resp, $args, true)) {
+        return $res;
+    }
+    return ModSystem::inst()->saveManager($req, $resp, $args);
+});
+
+$app->post('/ajax/manage/manager/group/{operation}', function (Request $req, Response $resp, $args) {
+    if($res = ModAuth::inst()->ajaxNeedAdmin($req, $resp, $args, true)) {
+        return $res;
+    }
+    return ModSystem::inst()->saveManagerGroup($req, $resp, $args);
+});
+
+$app->get('/admin/{gid}/items', function (Request $req, Response $resp, $args) {
+    if($res = ModAuth::inst()->needAdmin($req, $resp, $args, true)) {
+        return $res;
+    }
+    return ModSystem::inst()->showGroupItems($req, $resp, $args);
+})->setName("admin-group-items");
+
+$app->post('/ajax/manage/group/{gid}/items', function (Request $req, Response $resp, $args) {
+    if($res = ModAuth::inst()->ajaxNeedAdmin($req, $resp, $args, true)) {
+        return $res;
+    }
+    return ModSystem::inst()->saveGroupItem($req, $resp, $args);
+});
+
+/**
+ * for user
+ */
+$app->get('/user/{group}[/{qqno}]', function(Request $req, Response $resp, $args) {
+    return ModUser::inst()->viewByQqno($req, $resp, $args);
+})->setName('user-view');
 
 $app->run();
 

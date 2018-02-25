@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 17:13:12
  * @Last Modified by:   AminBy
- * @Last Modified time: 2016-10-30 01:44:46
+ * @Last Modified time: 2018-02-25 11:31:34
  */
 namespace ScalersTalk\Data;
 
@@ -16,8 +16,10 @@ class Config extends Common {
         try {
             $query = new Query($this->table);
             $query->equalTo("key", $key);
-            $obj = $query->first();
-            return $obj->get('value');
+            if ($query->count()) {
+                $obj = $query->first();
+                return $obj->get('value');
+            }
         }
         catch (CloudException $e) {
             Log::debug(" config {$key} get fail");

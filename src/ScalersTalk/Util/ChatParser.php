@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:52:25
  * @Last Modified by:   AminBy
- * @Last Modified time: 2018-01-12 23:24:47
+ * @Last Modified time: 2018-02-25 09:58:17
  */
 
 namespace ScalersTalk\Util;
@@ -11,7 +11,7 @@ namespace ScalersTalk\Util;
 class ChatParser {
 
     const RE_WHO = "/^(?P<when>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+(?P<nick>.*)\((?P<qqno>[1-9][0-9]{4,})\)$/i"; // 2016-07-03 09:04:00  Steve (2276064083)
-    const RE_SELF = "/^(?P<when>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+(?P<nick>.*)$/i"; // 2016-07-03 09:04:00  Steve 
+    const RE_SELF = "/^(?P<when>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+(?P<nick>.*)$/i"; // 2016-07-03 09:04:00  Steve
     static $RE_IGNORES = ['/\*.+@$/i'];
     static $COMPACIBILITY = [
         '【' => '[',
@@ -24,7 +24,7 @@ class ChatParser {
         '．' => '.',
         '＋' => '+',
         ];
-    // 
+    //
     private $re_checkin_date = "(?P<month>\d{1,2})[\.\-]?(?P<day>\d{1,2})[\s\-]*";
     private $re_checkin_item = "(?P<item>%s)";
     private $re_checkin_rate = "[\s\-]*(?P<rate>(\d{1,2}(?:\.\d{1,2})?)|100)\%?";
@@ -59,6 +59,7 @@ class ChatParser {
         $this->parse_step2_tokens();
         $this->parse_step3_checkins_leaves();
         // $this->parse_step4_remove_duplicated();
+        // print_r([$this->checkins, $this->leaves]);die;
     }
 
     private static function _to_time() {
@@ -76,10 +77,10 @@ class ChatParser {
         }
 
         $time = strtotime(sprintf('%d-%d-%d', date('Y', $when), $month, $day));
-        if($time < $when && abs($when - $time) > 2592000) {
+        if($time < $when && abs($when - $time) > 5184000) {
             $time = strtotime('+1 year', $time);
         }
-        elseif ($time > $when && abs($when - $time) > 2592000) {
+        elseif ($time > $when && abs($when - $time) > 5184000) {
             $time = strtotime('-1 year', $time);
         }
         return $time;
@@ -183,7 +184,7 @@ class ChatParser {
 
         $vs = strtotime('today', $when);
         $ve = strtotime('+1 month', $when);
-        return array_map(function($date) use ($qqno, $when, $vs, $ve) {
+        $ret = array_map(function($date) use ($qqno, $when, $vs, $ve) {
             $isvalid = $date >= $vs && $date <= $ve;
             return [
                 'item' => '请假',
@@ -194,6 +195,10 @@ class ChatParser {
                 'date' => intval($date),
             ];
         }, call_user_func_array('array_merge', $params));
+
+        return array_filter($ret, function($leave) {
+            return $leave['isvalid'];
+        });
     }
 
     public $checkins = [];
@@ -273,7 +278,7 @@ class ChatParser {
             }
         }
     }
-    
+
     protected $qqno_nicks = [];
     protected $qqno_chats_raw = [];
     protected function parse_step1_split() {
@@ -311,7 +316,7 @@ class ChatParser {
                 if(empty($this->qqno_chats_raw[$qqno][$when])) {
                     $this->qqno_chats_raw[$qqno][$when] = '';
                 }
-                $this->qqno_chats_raw[$qqno][$when] .= $line; 
+                $this->qqno_chats_raw[$qqno][$when] .= $line;
             }
         }
     }

@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:50:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2018-02-16 19:28:12
+ * @Last Modified time: 2018-02-22 00:12:32
  */
 namespace ScalersTalk\Checkin;
 
@@ -52,18 +52,19 @@ class Admin extends CheckinBase {
         $tmpfile = $files['qqchat']->file;
 
         // dataConfig
-        $dataConfig = new DataConfig($args['group']);
+        $gid = $args['group'];
+        $dataConfig = new DataConfig($gid);
         $lastUpdated = $dataConfig->get('lastUpdated', 0);
 
         // 解析上传的文件
-        $items = (new DataGroupItem)->fetchByGidAsArray($group);
+        $items = (new DataGroupItem)->fetchByGidAsArray($gid);
         $chatParser = new ChatParser($tmpfile, $items, $lastUpdated);
         $chatParser->parse();
 
         // 保存
-        $dataCheckin = new DataCheckin($args['group']);
-        $dataLeave = new DataLeave($args['group']);
-        $dataQQuser = new DataQQUser($args['group']);
+        $dataCheckin = new DataCheckin($gid);
+        $dataLeave = new DataLeave($gid);
+        $dataQQuser = new DataQQUser($gid);
 
         $dataLeave->batch_save($chatParser->leaves);
         $dataCheckin->batch_save($chatParser->checkins);

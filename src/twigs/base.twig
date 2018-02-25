@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <title>{% block page_title %}{% endblock %} - ScalersTalk Dictation</title>
+    <title>{% block page_title %}{% endblock %} - ScalersTalk</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
     <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
     <link href="//cdn.bootcss.com/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/plugins/boot-weekpicker.css">
+    {% block page_link %}{% endblock %}
     <link rel="stylesheet" href="/stylesheets/style.css">
   </head>
   <body>
@@ -29,14 +29,16 @@
         </ul>
         {% block  main_content %}{% endblock %}
     </div>
+    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
     <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="//cdn.bootcss.com/moment.js/2.10.6/moment.min.js"></script>
     <script src="//cdn.bootcss.com/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
     <script src="/plugins/boot-weekpicker.js"></script>
-    <script>
-    $('[data-toggle="tooltip"]').tooltip();
-    </script>
+    {% block page_script_src %}{% endblock %}
     <script type="text/javascript">
+    $(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
     {% block page_script %}{% endblock %}
     </script>
   </body>

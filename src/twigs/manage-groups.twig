@@ -1,0 +1,120 @@
+{% extends 'base.twig' %}
+
+{% block page_title %}小组管理{% endblock %}
+
+{% block main_content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="lead">
+                <h3>{{ '<<小组管理>>' }}</h3>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <p class="text-right"><button class="btn btn-primary" onclick="editGroup({})">New</button></p>
+        </div>
+        <div class="col-md-12">
+            <table class="table table-striped table-condensed">
+                <tr>
+                    <th class="text-right">ID</th>
+                    <th>名称</th>
+                    <th>最新打卡时间</th>
+                    <th>最后更新时间</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                {% for group in groups %}
+                <tr>
+                    <td class="text-right">{{ group.gid }}</td>
+                    <td>{{ group.gname }}</td>
+                    <td>{{ 'todo' }}</td>
+                    <td>{{ group.updatedAt.iso }}</td>
+                    <td><span title="{{ group.closed ? 'CLOSED' : 'OPENED' }}" class="glyphicon glyphicon-eye-{{ group.closed ? 'close' : 'open' }}"></span></td>
+                    <td>
+                        <button class="btn btn-default btn-xs" onclick="editGroup({{ group|json_encode }})">编辑</button>
+                        <a class="btn btn-primary btn-xs" href="{{ path_for('admin-group-items', {gid:group.gid}) }}">打卡项目</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div id="group-edit-form" style="display: none">
+        <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+            <form action="/ajax/manage/group">
+                <div class="form-group">
+                  <label for="gid">Group ID</label>
+                  <input type="text" class="form-control" name="gid" id="gid" placeholder="letters, digits or underlines">
+                </div>
+                <div class="form-group">
+                  <label for="gname">Group Name</label>
+                  <input type="text" class="form-control" name="gname" id="gname" placeholder="as you like">
+                </div>
+                <div class="form-group">
+                  <label for="gname">State</label>
+                  <label class="radio-inline">
+                    <input type="radio" name="closed" id="closed-true" value="true"> CLOSED
+                  </label>
+                  <label class="radio-inline">
+                    <input type="radio" name="closed" id="closed-false" value="false"> OPENED
+                  </label>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+
+{% block page_link %}
+    {{ parent() }}
+    <link type="text/css" rel="stylesheet" href="/plugins/layer/theme/default/layer.css">
+{% endblock %}
+
+{% block page_script_src %}
+    {{ parent() }}
+    <script type="text/javascript" src="/plugins/layer/layer.js"></script>
+{% endblock %}
+
+{% block page_script %}
+{{ parent() }}
+function submitEditGroup($form, layerindex) {
+    var url = $form.attr('action'), data = $form.serialize(), ret;
+    console.log(url, data);
+    $.ajax({
+        data: data,
+        type: 'POST',
+        url: url,
+        dataType: 'json',
+        success: function(data) {
+            if (!data.ok) {
+                alert(data.msg);
+            }
+            else {
+                layer.close(layerindex);
+                location.reload();
+            }
+        }
+    });
+    return true;
+}
+function editGroup(group) {
+    var is_new = !group.gid;
+    $('#group-edit-form [name=gid]').val(group.gid).attr('readonly', !is_new);
+    $('#group-edit-form [name=gname]').val(group.gname);
+    $('#group-edit-form [name=closed][value=' + (group.closed ? 'true' : 'false') + ']').click();
+
+    layer.open({
+      type: 1,
+      shade: true,
+      title: (is_new ? 'Creating group' : 'Editing group'),
+      area: '600px',
+      content: $('#group-edit-form'),
+      btn: ['Submit'],
+      yes: function(index, layero) {
+          submitEditGroup($('form', layero), index);
+      }
+    });
+}
+{% endblock %}
