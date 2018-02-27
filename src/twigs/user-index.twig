@@ -20,7 +20,9 @@
             </form>
         </div>
     </div>
-    <script>
+{% endblock %}
+
+{% block page_script %}
         $(function(){
             $('#btnViewUser').on('click', function() {
                 if($('#inputViewUser').val().length < 5) {
@@ -31,5 +33,4 @@
                 $(this).parents("form").attr({action: action}).submit();
             });
         });
-    </script>
 {% endblock %}
