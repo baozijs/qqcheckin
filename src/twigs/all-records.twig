@@ -23,7 +23,9 @@
         <div class="col-md-12">
             <table class="table table-striped table-condensed table-records">
                 <tr>
-                    <th width="20%" class="text-right">成员/日期</th>
+                    <th width="20%" class="text-right">成员/日期
+                        <br><span><input id="qqno-control" type="checkbox"><font color="blue">显示QQ号</font></span>
+                    </th>
                     {% for d in _range %}
                     <th>{{ d|date('D') }} <span class="hidden-xs hidden-sm">{{ d|date(' (m-d)') }}</span></th>
                     {% endfor %}
@@ -31,7 +33,7 @@
 
                 {% for qqno, nick in _qqusers %}
                 <tr>
-                    <td class="text-right"> <a href="{{ path_for('user-view', {group: group, qqno: qqno}) }}">{{ nick }}</a></td>
+                    <td class="text-right"> <a href="{{ path_for('user-view', {group: group, qqno: qqno}) }}">{{ nick }} <span class="span-qqno hidden"> <br>({{ qqno }})</span></a></td>
 
                     {% for date in _range %}
                     <td>
@@ -59,4 +61,14 @@
         </div>
     </div>
     {% endspaceless %}
+{% endblock %}
+
+
+{% block page_script %}
+{{ parent() }}
+$(function(){
+    $("#qqno-control").on('change', function() {
+        $(".span-qqno").toggleClass("hidden", !this.checked);
+    });
+});
 {% endblock %}
