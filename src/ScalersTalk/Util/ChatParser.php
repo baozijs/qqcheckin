@@ -3,13 +3,16 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:52:25
  * @Last Modified by:   AminBy
- * @Last Modified time: 2018-02-25 09:58:17
+ * @Last Modified time: 2018-03-11 00:43:30
  */
 
 namespace ScalersTalk\Util;
 
 class ChatParser {
 
+    const TYPE_VOICE = '语音';
+    const TYPE_IMAGE = '图片';
+    const TYPE_TEXT = '文本';
     const RE_WHO = "/^(?P<when>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+(?P<nick>.*)\((?P<qqno>[1-9][0-9]{4,})\)$/i"; // 2016-07-03 09:04:00  Steve (2276064083)
     const RE_SELF = "/^(?P<when>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+(?P<nick>.*)$/i"; // 2016-07-03 09:04:00  Steve
     static $RE_IGNORES = ['/\*.+@$/i'];
@@ -35,6 +38,7 @@ class ChatParser {
     private $item_key_map;
     private $item_valid_map;
     public function __construct($path, $items, $lastUpdate) {
+        $lastUpdate = 0;
         if(!is_file($path)) {
             die($path . ' is not a valid file.');
         }
@@ -56,10 +60,12 @@ class ChatParser {
 
     public function parse() {
         $this->parse_step1_split();
+        // print_r([$this->qqno_chats_raw]);die;
         $this->parse_step2_tokens();
+        // print_r([$this->qqno_chats]);die;
         $this->parse_step3_checkins_leaves();
         // $this->parse_step4_remove_duplicated();
-        // print_r([$this->checkins, $this->leaves]);die;
+        print_r([$this->checkins, $this->leaves]);die;
     }
 
     private static function _to_time() {
@@ -98,10 +104,35 @@ class ChatParser {
         return false;
     }
 
-    private static function _chatFilter($line) {
-        $line = preg_replace('/\][^\[]+\[/i', '][', $line);
+    private static function _chatFilter($origin) {
+        $size = mb_strlen($origin, 'UTF-8');
+        $line = preg_replace('/\][^\[]+\[/i', '][', $origin);
         $line = preg_replace('/(^[^\[]+)|([^\]]+$)/i', '', $line);
+
+        $size -= mb_strlen($line, 'UTF-8');
+        $line .= sprintf("[%s %d]", self::TYPE_TEXT, $size);
         return $line;
+    }
+
+    public static function is_chat_valid($iscurrent, $chat, $origin, $valid) {
+        if ($iscurrent && !strpos($chat, $origin)) {
+            return false;
+        }
+        if (!$iscurrent && strpos($chat, $origin)) {
+            return false;
+        }
+
+        if (in_array($valid, [self::TYPE_VOICE, self::TYPE_IMAGE])) {
+            return strpos($chat, sprintf('[%s]', $valid)) !== FALSE;
+        }
+        else if (strpos($valid, self::TYPE_TEXT) !== FALSE) {
+            if (preg_match(sprintf('/\[\s*%s\s*(\d+)\s*\]/i', self::TYPE_TEXT), $chat, $matches) > 0) {
+                $size = intval($matches[1]); // 实际长度
+                $require_size = intval(str_replace(self::TYPE_TEXT, '', $valid)); // 要求长度
+                return $size > $require_size;
+            }
+        }
+        return false;
     }
 
     protected function parse_checkin($checkin, $chat, $qqno, $chats_raw, $index) {
@@ -111,25 +142,25 @@ class ChatParser {
             if(!$valid) {
                 return true;
             }
-            // $chatsraw =& $this->qqno_chats;
+
+            // if in current
             $chat =& $chatsraw[$index]['chat'];
-            $valid_item = sprintf('[%s]', $valid);
-            // if valid before or follow token
-            if(strpos($chat, $checkin['origin'].$valid_item) >= 0
-                || strpos($chat, $valid_item.$checkin['origin']) >= 0) {
+            if (self::is_chat_valid(true, $chat, $checkin['origin'], $valid)) {
                 return true;
             }
 
-            if(
-                $index > 0
-                && abs($chatsraw[$index]['when'] - $chatsraw[$index-1]['when']) < 30
-                && $chatsraw[$index-1]['chat'] == $valid_item
+            // if previous chat (in 2 minutes)
+            if ($index > 0 && abs($chatsraw[$index]['when'] - $chatsraw[$index-1]['when']) < 120) {
+                if (self::is_chat_valid(false, $chatsraw[$index-1]['chat'], $checkin['origin'], $valid)) {
+                    return true;
+                }
+            }
 
-                || $index < count($chatsraw)
-                && abs($chatsraw[$index]['when'] - $chatsraw[$index+1]['when']) < 130
-                && $chatsraw[$index+1]['chat'] == $valid_item
-            ) {
-                return true;
+            // if next chat (in 2 minutes)
+            if (array_key_exists($index+1, $chatsraw) && abs($chatsraw[$index]['when'] - $chatsraw[$index+1]['when']) < 120) {
+                if (self::is_chat_valid(false, $chatsraw[$index+1]['chat'], $checkin['origin'], $valid)) {
+                    return true;
+                }
             }
 
             return false;
@@ -269,9 +300,7 @@ class ChatParser {
                 }
 
                 // save if not empty
-                if(!empty($item['checkin']) || !empty($item['leave'])) {
-                    $this->qqno_chats[$qqno][] = $item;
-                }
+                $this->qqno_chats[$qqno][] = $item;
             }
             if(!empty($qqchat)) {
                 $this->qqno_chats[$qqno] = $qqchat;
