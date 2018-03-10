@@ -5,7 +5,7 @@
     {% if not c.isvalid %}
         {# 无效 #}
         {% set clazz = clazz ~ ' do-invalid' %}
-        {% set title = title ~ '('~c.when|date('m-d')~'补)(超过5天补卡无效)' %}
+        {% set title = title ~ '('~c.when|date('m-d')~'补)(超期补卡或验证无效)' %}
     {% else %}
 
         {# 正确率 #}

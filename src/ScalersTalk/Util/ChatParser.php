@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:52:25
  * @Last Modified by:   AminBy
- * @Last Modified time: 2018-03-11 00:43:30
+ * @Last Modified time: 2018-03-11 01:44:02
  */
 
 namespace ScalersTalk\Util;
@@ -65,7 +65,7 @@ class ChatParser {
         // print_r([$this->qqno_chats]);die;
         $this->parse_step3_checkins_leaves();
         // $this->parse_step4_remove_duplicated();
-        print_r([$this->checkins, $this->leaves]);die;
+        // print_r([$this->checkins, $this->leaves]);die;
     }
 
     private static function _to_time() {
@@ -105,6 +105,7 @@ class ChatParser {
     }
 
     private static function _chatFilter($origin) {
+        $origin = preg_replace("/#([^\s#]+)#/i", "[#$1#]", $origin); // 增加 #xxx# 的支持
         $size = mb_strlen($origin, 'UTF-8');
         $line = preg_replace('/\][^\[]+\[/i', '][', $origin);
         $line = preg_replace('/(^[^\[]+)|([^\]]+$)/i', '', $line);
@@ -115,10 +116,10 @@ class ChatParser {
     }
 
     public static function is_chat_valid($iscurrent, $chat, $origin, $valid) {
-        if ($iscurrent && !strpos($chat, $origin)) {
+        if ($iscurrent && FALSE === strpos($chat, $origin)) {
             return false;
         }
-        if (!$iscurrent && strpos($chat, $origin)) {
+        if (!$iscurrent && FALSE !== strpos($chat, $origin)) {
             return false;
         }
 
@@ -136,8 +137,8 @@ class ChatParser {
     }
 
     protected function parse_checkin($checkin, $chat, $qqno, $chats_raw, $index) {
-        static $is_valid = null;
-        $is_valid || $is_valid = function($checkin, $chatsraw, $index) {
+        static $fn_check_valid = null;
+        $fn_check_valid || $fn_check_valid = function($checkin, $chatsraw, $index) {
             $valid =& $this->item_valid_map[$checkin['item']];
             if(!$valid) {
                 return true;
@@ -174,7 +175,8 @@ class ChatParser {
         $checkin['rate'] = floatval($checkin['rate']);
 
         // 无相应的资料记录无效 补5天以上的补卡无效
-        $checkin['isvalid'] = $is_valid($checkin, $chats_raw, $index) && abs(strtotime(date('Y-m-d', $chat['when'])) - $checkin['date']) < 518400;
+        $checkin['isvalid'] = $fn_check_valid($checkin, $chats_raw, $index) && abs(strtotime(date('Y-m-d', $chat['when'])) - $checkin['date']) < 518400;
+
         // 是否补卡
         // $checkin['isfill'] = date('Ymd', $checkin['date']) != date('Ymd', $chat['when']);
         $checkin['isfill'] = date('Ymd', $checkin['date']) < date('Ymd', $chat['when']);
@@ -253,7 +255,7 @@ class ChatParser {
     protected $qqno_chats = [];
     protected function parse_step2_tokens() {
         $ckPatt = sprintf("\s*(?:%s)?%s(?:%s)?\s*", $this->re_checkin_date, $this->re_checkin_item, $this->re_checkin_rate);
-        $ckPatt = "#\[" . str_replace('#', '\\#', $ckPatt) . "\]#i";
+        $ckPatt = "/\[" . str_replace('/', '\\/', $ckPatt) . "\]/i";
 
         $lvPatt = "#\[\s*请假[^\]]*\]#i";
 
@@ -271,7 +273,7 @@ class ChatParser {
                 }
 
                 // checkin
-                $matched = preg_match_all($ckPatt, $chat_raw, $matches);
+                $matched = preg_match_all($ckPatt, $item['chat'], $matches);
                 if($matched) {
                     $matches['origin'] = $matches[0];
                     $matches = array_intersect_key($matches, array_flip(['origin', 'month','day','item','rate']));
@@ -294,7 +296,7 @@ class ChatParser {
                 }
 
                 // take a leave
-                $matched = preg_match_all($lvPatt, $chat_raw, $matches);
+                $matched = preg_match_all($lvPatt, $item['chat'], $matches);
                 if($matched) {
                     $item['leave'] = $matches[0];
                 }

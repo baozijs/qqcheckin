@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 12:09:39
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-04-23 22:19:56
+ * @Last Modified time: 2018-03-11 01:30:10
  */
 namespace ScalersTalk\Data;
 
@@ -19,6 +19,7 @@ use \LeanCloud\CloudException;
 // [when] => 1476714131
 // [isvalid] =>
 // [isfill] => 1
+// [isfill_valid] => 1
 
 class Checkin extends Common {
     public function allWithDate($begindate, $enddate) {
