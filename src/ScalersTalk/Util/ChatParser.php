@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:52:25
  * @Last Modified by:   AminBy
- * @Last Modified time: 2018-03-11 01:44:02
+ * @Last Modified time: 2018-03-12 22:41:39
  */
 
 namespace ScalersTalk\Util;
@@ -38,7 +38,6 @@ class ChatParser {
     private $item_key_map;
     private $item_valid_map;
     public function __construct($path, $items, $lastUpdate) {
-        $lastUpdate = 0;
         if(!is_file($path)) {
             die($path . ' is not a valid file.');
         }
