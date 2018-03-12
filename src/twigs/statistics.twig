@@ -8,6 +8,11 @@
             <div class="lead">
                 <h3>{{ '<<'~'最近'~_recent~'周统计('~_start|date('m-d')~'~'~_end|date('m-d')~')>>' }}</h3>
             </div>
+            <div class="well well-sm">
+                <form>
+                    <label class="checkbox-inline text-primary" for="qqno-control"><input id="qqno-control" type="checkbox"> 显示QQ号 </label>
+                </form>
+            </div>
         </div>
         <div class="col-md-12 hidden-xs hidden-sm">
             <h4>打卡统计</h4>
@@ -32,7 +37,7 @@
 
                 <tr>
                     <th class="text-right">
-                    <a href="{{ path_for('user-view', {group: group, qqno: qqno}) }}">{{ _qqusers[qqno] }}</a>
+                    <a href="{{ path_for('user-view', {group: group, qqno: qqno}) }}">{{ _qqusers[qqno] }}</a><span class="span-qqno hidden"> <br>({{ qqno }})</span>
                     </th>
                     <td class="text-center">{{ sum }}</td>
                     {% for r in res2 %}
@@ -65,7 +70,7 @@
 
                 <tr>
                     <th class="text-right">
-                    <a href="{{ path_for('user-view', {group: group, qqno: qqno}) }}">{{ _qqusers[qqno] }}</a>
+                    <a href="{{ path_for('user-view', {group: group, qqno: qqno}) }}">{{ _qqusers[qqno] }}</a><span class="span-qqno hidden"> <br>({{ qqno }})</span>
                     </th>
                     <td class="text-center">{{ sum }}</td>
                     {% for r in res2 %}
@@ -90,7 +95,7 @@
 
                 <tr>
                     <th class="text-right">
-                    <a href="{{ path_for('user-view', {group: group, qqno: qqno}) }}">{{ _qqusers[qqno] }}</a>
+                    <a href="{{ path_for('user-view', {group: group, qqno: qqno}) }}">{{ _qqusers[qqno] }}</a><span class="span-qqno hidden"> <br>({{ qqno }})</span>
                     </th>
                     {% for ik,iv in _items %}
                     <td class="text-center">{{ res1[ik] }}</td>
@@ -100,4 +105,14 @@
             </table>
         </div>
     </div>
+{% endblock %}
+
+
+{% block page_script %}
+{{ parent() }}
+$(function(){
+    $("#qqno-control").on('change', function() {
+        $(".span-qqno").toggleClass("hidden", !this.checked);
+    });
+});
 {% endblock %}

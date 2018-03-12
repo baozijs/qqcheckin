@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 23:49:20
  * @Last Modified by:   AminBy
- * @Last Modified time: 2017-03-14 01:05:46
+ * @Last Modified time: 2018-03-12 21:57:22
  */
 namespace ScalersTalk\Data;
 
@@ -26,16 +26,18 @@ class QQUser extends Common {
             $skip = 0;
             do {
                 $query = new Query($this->table);
-                $query->skip($skip);
+                $query->limit(static::PACKNUM)->skip($skip);
                 $tmp = $query->find();
                 $ret = array_merge($ret, $tmp);
 
                 $skip += static::PACKNUM;
+                error_log(sprintf("qquser, ret count %d, tmp count: %d", count($ret), count($tmp)));
             }
             while(count($tmp) == static::PACKNUM);
         }catch(CloudException $e) {
             Log::debug($e->getMessage());
         }
+        error_log("qquser count " . count($ret));
         return $ret;
     }
 
