@@ -13,8 +13,23 @@ class ChatParser {
     const TYPE_VOICE = '语音';
     const TYPE_IMAGE = '图片';
     const TYPE_TEXT = '文本';
-    const RE_WHO = "/^(?P<when>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+(?P<nick>.*)\((?P<qqno>[1-9][0-9]{4,})\)$/i"; // 2016-07-03 09:04:00  Steve (2276064083)
-    const RE_SELF = "/^(?P<when>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+(?P<nick>.*)$/i"; // 2016-07-03 09:04:00  Steve
+
+    const RE_QQNO = "(?P<qqno>[1-9][0-9]{4,})";
+    const RE_NICK = "(?P<nick>.*)";
+    const RE_WHEN_DATETIME = "(?P<when>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})";
+    const RE_WHEN_DATE = "(?P<when>\d{4}-\d{2}-\d{2})";
+    const RE_WHEN_TIME = "(?P<when>\d{2}:\d{2}:\d{2})";
+
+    // 手机版的导出
+    // 2016-07-03 09:04:00  Steve (2276064083)
+    const RE_WHO = "/^\s*".self::RE_WHEN_DATETIME."\s*".self::RE_NICK."\s*\(".self::RE_QQNO."\)\s*$/i";
+    // pc版本的导出
+    // [S660]Lili-销售-深圳(408243646) 15:48:46
+    const RE_WHO_PC = "/^\s*".self::RE_NICK."\s*\(".self::RE_QQNO."\)\s*".self::RE_WHEN_TIME."\s*$/i";
+    // 手机版的导出导出人
+    // 2016-07-03 09:04:00  Steve
+    const RE_SELF = "/^\s*".self::RE_WHEN_DATETIME."\s*".self::RE_NICK."\s*$/i";
+    const RE_CURDATE = "/^\s*".self::RE_WHEN_DATE."\s*$/i";
     static $RE_IGNORES = ['/\*.+@$/i'];
     static $COMPACIBILITY = [
         '【' => '[',
@@ -37,6 +52,7 @@ class ChatParser {
     private $currentUpdate;
     private $item_key_map;
     private $item_valid_map;
+    private $current_date = null;
     public function __construct($path, $items, $lastUpdate) {
         if(!is_file($path)) {
             die($path . ' is not a valid file.');
@@ -58,6 +74,7 @@ class ChatParser {
     }
 
     public function parse() {
+        // $this->lastUpdate = 0;
         $this->parse_step1_split();
         // print_r([$this->qqno_chats_raw]);die;
         $this->parse_step2_tokens();
@@ -331,6 +348,18 @@ class ChatParser {
                 $this->currentUpdate = $when;
                 $this->qqno_nicks[$qqno]  = $match['nick'];
             }
+            elseif(preg_match(self::RE_WHO_PC, $line, $match)) {
+                if (is_null($this->current_date)) {
+                    continue;
+                }
+                $qqno = $match['qqno'];
+                $when = strtotime($this->current_date . ' ' . $match['when']);
+                if($when <= $this->lastUpdate) {
+                    continue;
+                }
+                $this->currentUpdate = $when;
+                $this->qqno_nicks[$qqno]  = $match['nick'];
+            }
             elseif(preg_match(self::RE_SELF, $line, $match)) {
                 $qqno = '999999999';
                 $when = strtotime($match['when']);
@@ -338,6 +367,9 @@ class ChatParser {
                     continue;
                 }
                 $this->qqno_nicks[$qqno]  = '管理员';
+            }
+            elseif(preg_match(self::RE_CURDATE, $line, $match)) {
+                $this->current_date = $match['when'];
             }
             elseif($qqno !== null && $when !== null) {
                 if($when <= $this->lastUpdate) {
