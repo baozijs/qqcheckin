@@ -17,7 +17,13 @@
             {% set title = title ~ c.when|date('(m-d补)') %}
         {% endif %}
     {% endif %}
-    <span class="{{ clazz }}" title="{{ title }}" data-toggle="tooltip" data-placement="top">{{title|first}}</span>
+    <span class="{{ clazz }}" title="{{ title }}" data-toggle="tooltip" data-placement="top">
+      {% if title|first == '#' %}
+      {{ title|replace({'#':''})|first }}
+      {% else %}
+      {{ title|first }}
+      {% endif %}
+    </span>
 {% endmacro %}
 
 {% macro leave_span(c) %}
