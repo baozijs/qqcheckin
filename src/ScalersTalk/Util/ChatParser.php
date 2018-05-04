@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:52:25
  * @Last Modified by:   AminBy
- * @Last Modified time: 2018-03-12 22:41:39
+ * @Last Modified time: 2018-05-04 10:59:11
  */
 
 namespace ScalersTalk\Util;
@@ -16,9 +16,9 @@ class ChatParser {
 
     const RE_QQNO = "(?P<qqno>[1-9][0-9]{4,})";
     const RE_NICK = "(?P<nick>.*)";
-    const RE_WHEN_DATETIME = "(?P<when>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})";
-    const RE_WHEN_DATE = "(?P<when>\d{4}-\d{2}-\d{2})";
-    const RE_WHEN_TIME = "(?P<when>\d{2}:\d{2}:\d{2})";
+    const RE_WHEN_DATETIME = "(?P<when>\d{4}-\d{1,2}-\d{1,2}\s+\d{1,2}:\d{1,2}:\d{1,2})";
+    const RE_WHEN_DATE = "(?P<when>\d{4}-\d{1,2}-\d{1,2})";
+    const RE_WHEN_TIME = "(?P<when>\d{1,2}:\d{1,2}:\d{1,2})";
 
     // 手机版的导出
     // 2016-07-03 09:04:00  Steve (2276064083)
