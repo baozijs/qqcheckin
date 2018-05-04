@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 15:55:53
  * @Last Modified by:   AminBy
- * @Last Modified time: 2018-02-16 09:27:48
+ * @Last Modified time: 2018-05-04 08:16:09
  */
 
 namespace ScalersTalk\Data;
@@ -213,12 +213,33 @@ abstract class Common {
     }
 
     protected function allWithDateWithQQNo($begindate, $enddate, $qqnos = null) {
+        if ($qqnos) {
+            if (!is_array($qqnos)) {
+                $qqnos = explode(",", $qqnos);
+            }
+        }
+        else {
+            return [];
+        }
+
+        $objects = [];
+        $qqnos_chunks = array_chunk($qqnos, 200);
+        foreach($qqnos_chunks as $qqnos_chunk) {
+            $objects = array_merge($objects, $this->allWithDateWithQQNo2($begindate, $enddate, $qqnos_chunk));
+        }
+        return $objects;
+    }
+
+    protected function allWithDateWithQQNo2($begindate, $enddate, $qqnos = null) {
         $objects = [];
 
         if ($qqnos) {
             if (is_array($qqnos)) {
                 $qqnos = implode(",", $qqnos);
             }
+        }
+        else {
+            return [];
         }
 
         try {
@@ -248,6 +269,8 @@ abstract class Common {
                 $ret = Query::doCloudQuery($cql);
                 $objects = array_merge($objects, $ret['results']);
                 $skip += self::PACKNUM;
+
+                error_log("$skip $cql");
             }
             while(count($ret['results']) == self::PACKNUM);
         }
