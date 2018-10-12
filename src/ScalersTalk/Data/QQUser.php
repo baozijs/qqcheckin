@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-23 23:49:20
  * @Last Modified by:   AminBy
- * @Last Modified time: 2018-03-12 21:57:22
+ * @Last Modified time: 2018-10-12 23:40:30
  */
 namespace ScalersTalk\Data;
 
@@ -46,10 +46,11 @@ class QQUser extends Common {
             $query = new Query($this->table);
             $query->equalTo("qqno", intval($qqno));
             $obj = $query->first();
-            return $obj->get('nick');
+            $nick = $obj->get('nick');
+            return empty($nick) ? ('QQ'.$qqno) : $nick;
         }
         catch (CloudException $e) {
-            Log::debug($qqno . ' not found.');
+            Log::debug($qqno . ' not found.' . $e->getMessage());
         }
     }
 

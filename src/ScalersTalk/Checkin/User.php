@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:53:10
  * @Last Modified by:   AminBy
- * @Last Modified time: 2018-02-16 19:28:10
+ * @Last Modified time: 2018-10-12 23:42:19
  */
 namespace ScalersTalk\Checkin;
 
@@ -41,7 +41,7 @@ class User extends CheckinBase {
         $qqno = $args['qqno'];
         $_nick = $dataQQUser->nick($qqno);
         if(empty($_nick)) {
-            die("user {$qqno} has no records.");
+            die("未找到与QQ号'{$qqno}'相关的打卡记录.");
         }
 
         // 起止时间
