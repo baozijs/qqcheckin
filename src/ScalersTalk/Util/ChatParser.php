@@ -3,7 +3,7 @@
  * @Author: AminBy
  * @Date:   2016-10-16 16:52:25
  * @Last Modified by:   AminBy
- * @Last Modified time: 2018-05-04 10:59:11
+ * @Last Modified time: 2019-03-13 22:52:03
  */
 
 namespace ScalersTalk\Util;
@@ -61,6 +61,9 @@ class ChatParser {
         $this->content = strtr(fread($hfile, filesize($path)), self::$COMPACIBILITY);
         fclose($hfile);
 
+        $this->content = static::remove_utf8_bom($this->content); // remove utf8 bom
+        $this->content = static::trans_to_utf8($this->content); // trans to utf8
+
         $this->lastUpdate = empty($lastUpdate) ? 0 : $lastUpdate - 30;
 
         $items = array_map(function($i, $k){
@@ -71,6 +74,21 @@ class ChatParser {
         $this->item_key_map = array_combine($this->items, array_column($items, 2));
         $this->item_valid_map = array_combine($this->items, array_column($items, 1));
         $this->re_checkin_item = sprintf($this->re_checkin_item, implode("|", $this->items));
+    }
+
+    public static function remove_utf8_bom($text) {
+        $bom = pack('H*','EFBBBF');
+        $text = preg_replace("/^$bom/", '', $text);
+        return $text;
+    }
+
+    public static function trans_to_utf8($text) {
+        $encode = mb_detect_encoding($text, array('UTF-8','GB2312','GBK'));
+        if($encode == "GB2312" || $encode == "GBK") {
+            return @iconv($encode, 'UTF-8', $text);
+        }
+
+        return $text;
     }
 
     public function parse() {
